@@ -42,6 +42,7 @@ export default function Home() {
     useGameStore.getState().reset();
     useGameStore.setState({ gameState: "playing" });
     engineRef.current?.setClassPreset(preset);
+    useGameStore.setState({ activeClassName: preset.name });
     if (lockPointer) {
       canvasRef.current?.requestPointerLock();
     }

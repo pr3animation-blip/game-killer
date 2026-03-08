@@ -167,6 +167,7 @@ interface GameStore {
 
   // Hit marker
   showHitMarker: boolean;
+  isHeadshotHit: boolean;
 
   // Weapons
   inventory: InventoryState;
@@ -198,6 +199,7 @@ interface GameStore {
   opportunity: OpportunityState | null;
   medalPace: MedalPaceState;
   personalBest: PersonalBestSnapshot;
+  activeClassName: string | null;
 
   // Leaderboard
   gameOverStats: GameOverStats | null;
@@ -222,7 +224,7 @@ interface GameStore {
   setMovementState: (state: MovementState, dashCooldown: number) => void;
   setTimers: (runTimer: number, levelTimer: number, escapeTimer: number | null) => void;
   setLevelCompleteSummary: (summary: LevelCompleteSummary | null) => void;
-  flashHitMarker: () => void;
+  flashHitMarker: (isHeadshot?: boolean) => void;
   setGameOverStats: (stats: GameOverStats) => void;
   loadLeaderboard: () => void;
   saveToLeaderboard: (stats: GameOverStats) => void;
@@ -242,6 +244,7 @@ export const useGameStore = create<GameStore>((set) => ({
   showScoreboard: false,
   killFeed: [],
   showHitMarker: false,
+  isHeadshotHit: false,
   inventory: DEFAULT_INVENTORY_STATE,
   pickupPrompt: DEFAULT_PICKUP_PROMPT,
   threatAlert: DEFAULT_THREAT_ALERT,
@@ -267,6 +270,7 @@ export const useGameStore = create<GameStore>((set) => ({
   opportunity: null,
   medalPace: DEFAULT_MEDAL_PACE,
   personalBest: DEFAULT_PERSONAL_BEST,
+  activeClassName: null,
   gameOverStats: null,
   leaderboard: [],
 
@@ -305,9 +309,9 @@ export const useGameStore = create<GameStore>((set) => ({
   setTimers: (runTimer, levelTimer, escapeTimer) =>
     set({ runTimer, levelTimer, escapeTimer }),
   setLevelCompleteSummary: (levelCompleteSummary) => set({ levelCompleteSummary }),
-  flashHitMarker: () => {
-    set({ showHitMarker: true });
-    setTimeout(() => set({ showHitMarker: false }), 150);
+  flashHitMarker: (isHeadshot) => {
+    set({ showHitMarker: true, isHeadshotHit: isHeadshot ?? false });
+    setTimeout(() => set({ showHitMarker: false, isHeadshotHit: false }), 150);
   },
   setGameOverStats: (gameOverStats) => set({ gameOverStats }),
   loadLeaderboard: () => {
@@ -368,6 +372,7 @@ export const useGameStore = create<GameStore>((set) => ({
       opportunity: null,
       medalPace: DEFAULT_MEDAL_PACE,
       personalBest: DEFAULT_PERSONAL_BEST,
+      activeClassName: null,
       gameOverStats: null,
     }),
 }));

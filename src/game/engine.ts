@@ -1346,6 +1346,12 @@ export class GameEngine {
     this.killChainTimer = 0;
     this.createOptionalObjectiveVisuals();
     this.applyRunModifiers();
+    if (resetRun) {
+      this.emit("upgradesChanged", this.activeUpgrades);
+      this.emit("progressionChanged", this.progression);
+      this.emit("runtimeModifiersChanged", this.runtimeModifiers);
+      this.emit("balanceChanged", this.balanceSnapshot);
+    }
     this.respawnPlayer();
     this.updateMedalPace();
     this.objectiveState = this.buildObjectiveState(null);
