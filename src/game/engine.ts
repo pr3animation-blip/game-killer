@@ -7,6 +7,7 @@ import {
   buildArena,
 } from "./arena";
 import { AudioManager } from "./audio";
+import { ClassPreset } from "./classes";
 import { Bot } from "./bot";
 import { InputManager } from "./input";
 import { LEVEL_DEFINITIONS, LEVEL_ORDER } from "./levels";
@@ -220,7 +221,7 @@ export type EngineEventCallback = {
   playerDied: () => void;
   gameStateChanged: (state: GameState) => void;
   fpsUpdate: (fps: number) => void;
-  hit: (position: THREE.Vector3, damage: number) => void;
+  hit: (position: THREE.Vector3, damage: number, isHeadshot: boolean) => void;
   reloading: (isReloading: boolean) => void;
   threatChanged: (threat: ThreatAlert) => void;
   radarChanged: (radar: RadarState) => void;
@@ -292,6 +293,7 @@ export class GameEngine {
   private scoreEvents: ScoreEvent[] = [];
   private activeMutator: RunMutator | null = null;
   private activeUpgrades: AppliedUpgrade[] = [];
+  private classPreset: ClassPreset | null = null;
   private progression: ProgressionState = createInitialProgressionState();
   private levelUpChoice: LevelUpChoiceState = createInactiveLevelUpChoice();
   private runtimeModifiers: RuntimeModifiers = computeRuntimeModifiers([]);
@@ -395,6 +397,10 @@ export class GameEngine {
     this.pushFullState();
     this.input.requestPointerLock();
     this.tick(this.lastTime);
+  }
+
+  setClassPreset(preset: ClassPreset | null): void {
+    this.classPreset = preset;
   }
 
   chooseUpgrade(upgradeId: UpgradeId): void {
@@ -743,7 +749,7 @@ export class GameEngine {
 
     this.player.camera.applyShotImpulse(dispatch.cameraKick);
 
-    const damageEvents = new Map<string, { damage: number; point: THREE.Vector3 }>();
+    const damageEvents = new Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>();
     const botMeshes = this.bots
       .filter((bot) => bot.isAlive())
       .flatMap((bot) => bot.getKillMeshes());
@@ -761,8 +767,9 @@ export class GameEngine {
         const current = damageEvents.get(hit.entity.id);
         if (current) {
           current.damage += hit.damage;
+          if (hit.isHeadshot) current.isHeadshot = true;
         } else {
-          damageEvents.set(hit.entity.id, { damage: hit.damage, point: hit.point.clone() });
+          damageEvents.set(hit.entity.id, { damage: hit.damage, point: hit.point.clone(), isHeadshot: hit.isHeadshot });
         }
       }
     }
@@ -812,11 +819,22 @@ export class GameEngine {
     return assisted;
   }
 
+  /** Returns a damage multiplier based on where the hit lands on the bot body. */
+  private getBodyPartMultiplier(hitY: number, botGroundY: number): { multiplier: number; isHeadshot: boolean } {
+    const relativeY = hitY - botGroundY;
+    // Head zone: above 1.55 (head center ~1.72, radius 0.25)
+    if (relativeY >= 1.55) return { multiplier: 2.5, isHeadshot: true };
+    // Legs zone: below 0.75 (legs end around upper body pivot at 0.96)
+    if (relativeY < 0.75) return { multiplier: 0.65, isHeadshot: false };
+    // Body zone: everything in between
+    return { multiplier: 1.0, isHeadshot: false };
+  }
+
   private resolveRayCommand(
     command: WeaponRayCommand,
     botMeshes: THREE.Object3D[]
   ): {
-    hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number }>;
+    hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }>;
     traceEnd: THREE.Vector3;
   } {
     const raycaster = new THREE.Raycaster(
@@ -830,17 +848,19 @@ export class GameEngine {
       .addScaledVector(command.direction, command.range);
     const worldHit = raycaster.intersectObjects(this.arena.wallMeshes, false)[0] ?? null;
     const worldDistance = worldHit?.distance ?? command.range;
-    const hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number }> = [];
+    const hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }> = [];
     const seen = new Set<string>();
 
     for (const hit of raycaster.intersectObjects(botMeshes, false)) {
       const entity = (hit.object.userData as Bot["data"]) ?? null;
       if (!entity || seen.has(entity.id) || hit.distance > worldDistance) continue;
       seen.add(entity.id);
+      const { multiplier, isHeadshot } = this.getBodyPartMultiplier(hit.point.y, entity.position.y);
       hits.push({
         entity,
         point: hit.point.clone(),
-        damage: command.damage,
+        damage: command.damage * multiplier,
+        isHeadshot,
       });
       if (hits.length >= command.maxPierce) break;
     }
@@ -862,12 +882,17 @@ export class GameEngine {
     const impacts = this.weapon.updateProjectiles(dt, botMeshes, this.arena.wallMeshes);
 
     for (const impact of impacts) {
-      const damageEvents = new Map<string, { damage: number; point: THREE.Vector3 }>();
+      const damageEvents = new Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>();
 
       if (impact.directEntity) {
+        const { multiplier, isHeadshot } = this.getBodyPartMultiplier(
+          impact.position.y,
+          impact.directEntity.position.y
+        );
         damageEvents.set(impact.directEntity.id, {
-          damage: impact.directDamage,
+          damage: impact.directDamage * multiplier,
           point: impact.position.clone(),
+          isHeadshot,
         });
       }
 
@@ -885,6 +910,7 @@ export class GameEngine {
             damageEvents.set(bot.data.id, {
               damage: scaledDamage,
               point: impact.position.clone(),
+              isHeadshot: false,
             });
           }
         }
@@ -897,7 +923,7 @@ export class GameEngine {
   }
 
   private applyDamageEvents(
-    damageEvents: Map<string, { damage: number; point: THREE.Vector3 }>,
+    damageEvents: Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>,
     weaponName: string
   ): void {
     for (const [botId, event] of damageEvents.entries()) {
@@ -907,7 +933,7 @@ export class GameEngine {
       const damage = Math.max(1, Math.round(event.damage));
       const killed = bot.takeDamage(damage);
       this.audio.playHit();
-      this.emit("hit", event.point, damage);
+      this.emit("hit", event.point, damage, event.isHeadshot);
 
       if (!killed) continue;
 
@@ -1244,12 +1270,22 @@ export class GameEngine {
       this.player.score = 0;
       this.player.deaths = 0;
       this.claimedWeaponPickups.clear();
-      this.weapon.resetForNewRun();
+      this.weapon.resetForNewRun(this.classPreset?.weaponId);
       this.comboState = createEmptyComboState();
       this.bankState = createEmptyBankState();
       this.scoreEvents = [];
       this.activeUpgrades = [];
       this.progression = createInitialProgressionState();
+      // Apply class preset upgrade
+      if (this.classPreset?.upgradeId) {
+        for (let i = 0; i < this.classPreset.upgradeStacks; i++) {
+          this.activeUpgrades = applyUpgrade(this.activeUpgrades, this.classPreset.upgradeId);
+        }
+        this.progression = {
+          ...this.progression,
+          powerScore: computePowerScore(this.activeUpgrades),
+        };
+      }
       this.activeMutator = this.rollMutator();
       this.levelUpChoice = createInactiveLevelUpChoice();
       this.recoveryShard = createInactiveRecoveryShard();
