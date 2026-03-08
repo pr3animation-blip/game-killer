@@ -67,7 +67,6 @@ const RADAR_RANGE = 22;
 const INTERACT_RANGE = 2.4;
 const HOLD_ZONE_TOLERANCE = 0.2;
 const EXTRACTION_TOLERANCE = 0.25;
-const RESPAWN_TIME = 2;
 const JUMP_PAD_COOLDOWN = 0.9;
 const WEAPON_PICKUP_RADIUS = 1.4;
 const WEAPON_REPLACE_HOLD = 0.45;
@@ -273,7 +272,6 @@ export class GameEngine {
   private fpsFrames = 0;
   private fpsTime = 0;
   private gameState: GameState = "playing";
-  private respawnTimer = 0;
   private threatAlert: ThreatAlert = createInactiveThreatAlert();
   private radarState: RadarState = createInactiveRadarState();
   private objectiveState: ObjectiveState = createEmptyObjectiveState();

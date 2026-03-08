@@ -31,6 +31,7 @@ export default function Home() {
   const handlePlay = (lockPointer = true) => {
     setShowSettings(false);
     setExitContext(null);
+    setShowLeaderboard(false);
     useGameStore.getState().reset();
     useGameStore.setState({ gameState: "playing" });
     // Request pointer lock within the user gesture (click) context

@@ -13,8 +13,11 @@ export function GameOverScreen({ onReturnToMenu }: GameOverScreenProps) {
 
   if (!stats) return null;
 
-  const rank = leaderboard.findIndex((e) => e.score <= stats.score) + 1 || leaderboard.length + 1;
-  const isTop = rank <= leaderboard.length;
+  const rankIndex = leaderboard.findIndex(
+    (e) => e.score === stats.score && e.kills === stats.kills && e.timeAlive === stats.timeAlive
+  );
+  const isTop = rankIndex !== -1;
+  const rank = isTop ? rankIndex + 1 : 0;
 
   const formatTime = (t: number) => {
     const m = Math.floor(t / 60);

@@ -8,6 +8,7 @@ import {
   Zap,
 } from "lucide-react";
 import { MenuBackground } from "@/components/menu/menu-background";
+import { useGameStore } from "@/state/game-store";
 
 interface MainMenuProps {
   onPlay: () => void;
@@ -18,6 +19,11 @@ interface MainMenuProps {
 
 export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenuProps) {
   const [time, setTime] = useState("");
+  const loadLeaderboard = useGameStore((s) => s.loadLeaderboard);
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, [loadLeaderboard]);
 
   useEffect(() => {
     const update = () => {
