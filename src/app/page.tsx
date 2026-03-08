@@ -10,9 +10,12 @@ import { MainMenu } from "@/components/menu/main-menu";
 import { PauseMenu } from "@/components/menu/pause-menu";
 import { SettingsMenu, SettingsValues } from "@/components/menu/settings-menu";
 import { useGameStore } from "@/state/game-store";
+import { ClassSelect } from "@/components/menu/class-select";
+import { ClassPreset } from "@/game/classes";
+import { CLASS_PRESETS } from "@/game/classes";
 import { GameEngine } from "@/game/engine";
 
-type Screen = "mainMenu" | "game" | "settings";
+type Screen = "mainMenu" | "classSelect" | "game" | "settings";
 type ExitContext = "mainMenu" | "pause";
 type ElectronAPI = {
   quitApp?: () => void;
@@ -28,14 +31,17 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const autostartedRef = useRef(false);
 
-  const handlePlay = (lockPointer = true) => {
+  const handlePlay = () => {
     setShowSettings(false);
     setExitContext(null);
     setShowLeaderboard(false);
+    setScreen("classSelect");
+  };
+
+  const handleClassSelected = (preset: ClassPreset, lockPointer = true) => {
     useGameStore.getState().reset();
     useGameStore.setState({ gameState: "playing" });
-    // Request pointer lock within the user gesture (click) context
-    // before React re-renders — the canvas is always mounted
+    engineRef.current?.setClassPreset(preset);
     if (lockPointer) {
       canvasRef.current?.requestPointerLock();
     }
@@ -49,7 +55,8 @@ export default function Home() {
 
     const frameId = window.requestAnimationFrame(() => {
       autostartedRef.current = true;
-      handlePlay(false);
+      const recruit = CLASS_PRESETS[0];
+      handleClassSelected(recruit, false);
     });
 
     return () => window.cancelAnimationFrame(frameId);
@@ -127,6 +134,14 @@ export default function Home() {
 
       {showLeaderboard && (
         <Leaderboard onBack={() => setShowLeaderboard(false)} />
+      )}
+
+      {/* Class Select */}
+      {screen === "classSelect" && (
+        <ClassSelect
+          onSelect={(preset) => handleClassSelected(preset)}
+          onBack={() => setScreen("mainMenu")}
+        />
       )}
 
       {/* Game Screen */}
