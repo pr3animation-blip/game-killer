@@ -1,65 +1,171 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useCallback, useEffect, useRef } from "react";
+import { GameCanvas } from "@/components/game/game-canvas";
+import { GameHUD } from "@/components/hud/game-hud";
+import { ExitMenu } from "@/components/menu/exit-menu";
+import { GameOverScreen } from "@/components/menu/game-over-screen";
+import { Leaderboard } from "@/components/menu/leaderboard";
+import { MainMenu } from "@/components/menu/main-menu";
+import { PauseMenu } from "@/components/menu/pause-menu";
+import { SettingsMenu, SettingsValues } from "@/components/menu/settings-menu";
+import { useGameStore } from "@/state/game-store";
+import { GameEngine } from "@/game/engine";
+
+type Screen = "mainMenu" | "game" | "settings";
+type ExitContext = "mainMenu" | "pause";
+type ElectronAPI = {
+  quitApp?: () => void;
+};
 
 export default function Home() {
+  const [screen, setScreen] = useState<Screen>("mainMenu");
+  const [showSettings, setShowSettings] = useState(false);
+  const [exitContext, setExitContext] = useState<ExitContext | null>(null);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const gameState = useGameStore((s) => s.gameState);
+  const engineRef = useRef<GameEngine | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const autostartedRef = useRef(false);
+
+  const handlePlay = (lockPointer = true) => {
+    setShowSettings(false);
+    setExitContext(null);
+    useGameStore.getState().reset();
+    useGameStore.setState({ gameState: "playing" });
+    // Request pointer lock within the user gesture (click) context
+    // before React re-renders — the canvas is always mounted
+    if (lockPointer) {
+      canvasRef.current?.requestPointerLock();
+    }
+    setScreen("game");
+  };
+
+  useEffect(() => {
+    if (autostartedRef.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("autostart") !== "1") return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      autostartedRef.current = true;
+      handlePlay(false);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
+
+  const handleEngineReady = useCallback((engine: GameEngine) => {
+    engineRef.current = engine;
+  }, []);
+
+  const handleResume = () => {
+    setExitContext(null);
+    // Lock pointer within the click gesture context
+    canvasRef.current?.requestPointerLock();
+    engineRef.current?.resume();
+  };
+
+  const handleQuitToMenu = () => {
+    engineRef.current?.dispose();
+    engineRef.current = null;
+    useGameStore.getState().reset();
+    useGameStore.setState({ gameState: "menu" });
+    setShowSettings(false);
+    setExitContext(null);
+    setScreen("mainMenu");
+  };
+
+  const handleApplySettings = (settings: SettingsValues) => {
+    engineRef.current?.updateSettings(settings);
+  };
+
+  const handleOpenSettings = () => {
+    setExitContext(null);
+    setShowSettings(true);
+  };
+
+  const handleOpenExit = (context: ExitContext) => {
+    setShowSettings(false);
+    setExitContext(context);
+  };
+
+  const handleQuitDesktop = () => {
+    if (typeof window !== "undefined") {
+      const electronAPI = (window as Window & { electronAPI?: ElectronAPI })
+        .electronAPI;
+
+      if (electronAPI?.quitApp) {
+        electronAPI.quitApp();
+        return;
+      }
+
+      window.close();
+    }
+  };
+
+  const isGame = screen === "game";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="game-shell">
+      {/* Canvas is always mounted so pointer lock can be requested in click handlers */}
+      <canvas
+        ref={canvasRef}
+        className={`absolute inset-0 w-full h-full block z-0 ${isGame ? "cursor-none" : "pointer-events-none"}`}
+      />
+      <GameCanvas canvasRef={canvasRef} onEngineReady={handleEngineReady} active={isGame} />
+
+      {/* Main Menu */}
+      {screen === "mainMenu" && (
+        <MainMenu
+          onPlay={handlePlay}
+          onSettings={handleOpenSettings}
+          onExit={() => handleOpenExit("mainMenu")}
+          onLeaderboard={() => setShowLeaderboard(true)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      )}
+
+      {showLeaderboard && (
+        <Leaderboard onBack={() => setShowLeaderboard(false)} />
+      )}
+
+      {/* Game Screen */}
+      {isGame && (
+        <>
+          <GameHUD />
+
+          {/* Pause overlay */}
+          {gameState === "paused" && !showSettings && (
+            <PauseMenu
+              onResume={handleResume}
+              onSettings={handleOpenSettings}
+              onExit={() => handleOpenExit("pause")}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          )}
+
+          {gameState === "gameover" && (
+            <GameOverScreen onReturnToMenu={handleQuitToMenu} />
+          )}
+        </>
+      )}
+
+      {/* Settings overlay (shown over both main menu and pause) */}
+      {showSettings && (
+        <SettingsMenu
+          onBack={() => setShowSettings(false)}
+          onApply={handleApplySettings}
+        />
+      )}
+
+      {exitContext && (
+        <ExitMenu
+          mode={exitContext}
+          onBack={() => setExitContext(null)}
+          onQuitDesktop={handleQuitDesktop}
+          onQuitToMenu={
+            exitContext === "pause" ? handleQuitToMenu : undefined
+          }
+        />
+      )}
     </div>
   );
 }
