@@ -251,6 +251,7 @@ export type EngineEventCallback = {
   opportunityChanged: (opportunity: OpportunityState | null) => void;
   medalPaceChanged: (pace: MedalPaceState) => void;
   personalBestChanged: (snapshot: PersonalBestSnapshot) => void;
+  gameOver: (stats: GameOverStats) => void;
 };
 
 export class GameEngine {
@@ -309,6 +310,7 @@ export class GameEngine {
   private killChainCount = 0;
   private pressureTimer = PRESSURE_WINDOW;
   private reliefTimer = 0;
+  private totalKills = 0;
 
   private listeners: Partial<EngineEventCallback> = {};
 
@@ -640,7 +642,7 @@ export class GameEngine {
     this.updateRecoveryShard(dt);
     this.updateComboDecay(dt);
 
-    if (this.gameState === "runComplete" || this.gameState === "levelUpChoice") {
+    if (this.gameState === "runComplete" || this.gameState === "levelUpChoice" || this.gameState === "gameover") {
       this.pushState();
       return;
     }
@@ -658,13 +660,6 @@ export class GameEngine {
     }
 
     if (!this.player.isAlive) {
-      this.threatAlert = createInactiveThreatAlert();
-      this.radarState = createInactiveRadarState();
-      this.pickupPrompt = createInactivePickupPrompt();
-      this.respawnTimer -= dt;
-      if (this.respawnTimer <= 0) {
-        this.respawnPlayer();
-      }
       this.pushState();
       return;
     }
@@ -1247,6 +1242,7 @@ export class GameEngine {
 
     if (resetRun) {
       this.runTime = 0;
+      this.totalKills = 0;
       this.player.score = 0;
       this.player.deaths = 0;
       this.claimedWeaponPickups.clear();
@@ -1863,55 +1859,38 @@ export class GameEngine {
       styleBonus += 25;
     }
 
+    this.totalKills += 1;
     this.addComboValue(styleBonus, weaponName, "kill", bot.data.name);
     this.awardKillXp(xpGain);
     this.updateMedalPace();
   }
 
   private handlePlayerDeath(killerName: string): void {
-    const lostLive = this.comboState.liveBonus;
-    const recoveryFactor = 0.5;
-    const recoveryValue = Math.round(lostLive * recoveryFactor);
+    this.gameState = "gameover";
 
-    this.threatAlert = createInactiveThreatAlert();
-    this.radarState = createInactiveRadarState();
-    this.pickupPrompt = createInactivePickupPrompt();
-    this.levelRuntime.levelDeaths += 1;
-    this.runTime += 5;
-    this.bankState.lostOnDeath = lostLive;
-    this.comboState.liveBonus = 0;
-    this.bankState.live = 0;
-    this.comboState.multiplier = 1;
-    this.comboState.streak = 0;
-    this.comboState.heat = 0;
-    this.comboState.timer = 0;
-    this.pushScoreEvent({
-      kind: "death",
-      label: "Momentum Lost",
-      amount: 0,
-      detail: "Unbanked bonus dropped on death.",
-    });
+    const stats: GameOverStats = {
+      score: this.player.score + this.bankState.level + this.bankState.run,
+      kills: this.totalKills,
+      timeAlive: Number(this.runTime.toFixed(1)),
+      bestCombo: this.comboState.bestMultiplier,
+      levelReached: this.currentLevel.name,
+      killedBy: killerName,
+    };
 
-    if (recoveryValue > 0) {
-      this.dropRecoveryShard(recoveryValue);
-    }
+    this.updatePersonalBest(false);
 
-    this.emit("deathsChanged", this.player.deaths);
-    this.emit("threatChanged", this.threatAlert);
-    this.emit("radarChanged", this.radarState);
-    this.emit("pickupPromptChanged", this.pickupPrompt);
-    this.emit("playerDied");
     this.emit("kill", {
       killer: killerName,
       victim: "You",
       weapon: "Rifle",
       timestamp: Date.now(),
     });
-    this.respawnTimer = RESPAWN_TIME;
+    this.emit("gameStateChanged", "gameover");
+    this.emit("gameOver", stats);
+    this.emit("personalBestChanged", this.personalBest);
     this.audio.playDeath();
-    this.player.camera.resetMotionEffects();
-    this.weapon.clearTransientState();
-    this.updateMedalPace();
+    this.input.exitPointerLock();
+    this.pushState();
   }
 
   private dropRecoveryShard(value: number): void {
