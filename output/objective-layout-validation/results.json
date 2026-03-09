@@ -1,0 +1,244 @@
+{
+  "relay-loop": {
+    "placements": [
+      {
+        "type": "interactable",
+        "id": "relay-terminal-a",
+        "x": -12,
+        "z": -11,
+        "radius": 1.15
+      },
+      {
+        "type": "interactable",
+        "id": "relay-terminal-b",
+        "x": 13,
+        "z": -10,
+        "radius": 1.15
+      },
+      {
+        "type": "interactable",
+        "id": "relay-terminal-c",
+        "x": 10,
+        "z": 11,
+        "radius": 1.15
+      },
+      {
+        "type": "extraction",
+        "id": "Extract",
+        "x": -14.5,
+        "z": 15,
+        "radius": 2.6
+      },
+      {
+        "type": "jumpPad",
+        "id": "relay-pad-1",
+        "x": -15.08,
+        "z": 9.54,
+        "radius": 2.15
+      },
+      {
+        "type": "weaponPickup",
+        "id": "relay-arc-smg",
+        "x": -12.78,
+        "z": 6.65,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "relay-scattershot",
+        "x": -2.15,
+        "z": -5.64,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "relay-carbine-refill",
+        "x": 14.03,
+        "z": -0.8,
+        "radius": 1.35
+      },
+      {
+        "type": "optionalObjective",
+        "id": "relay-elite-wave",
+        "x": 11.12,
+        "z": -15.18,
+        "radius": 3.15
+      },
+      {
+        "type": "optionalObjective",
+        "id": "relay-jump-cache",
+        "x": -16.04,
+        "z": 3.41,
+        "radius": 2.65
+      },
+      {
+        "type": "optionalObjective",
+        "id": "relay-fast-extract",
+        "x": -5.09,
+        "z": 15.7,
+        "radius": 2.95
+      }
+    ],
+    "colliderViolations": [],
+    "pairViolations": []
+  },
+  "uplink-split": {
+    "placements": [
+      {
+        "type": "holdZone",
+        "id": "uplink-a",
+        "x": -7.04,
+        "z": 8.39,
+        "radius": 4.25
+      },
+      {
+        "type": "holdZone",
+        "id": "uplink-b",
+        "x": 7.04,
+        "z": -8.39,
+        "radius": 4.25
+      },
+      {
+        "type": "extraction",
+        "id": "Central Extract",
+        "x": 0.43,
+        "z": 4.97,
+        "radius": 2.85
+      },
+      {
+        "type": "jumpPad",
+        "id": "uplink-pad-left",
+        "x": -13.89,
+        "z": 5,
+        "radius": 2.2
+      },
+      {
+        "type": "jumpPad",
+        "id": "uplink-pad-right",
+        "x": 13.89,
+        "z": -5,
+        "radius": 2.2
+      },
+      {
+        "type": "weaponPickup",
+        "id": "uplink-helix",
+        "x": -2.49,
+        "z": 3.53,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "uplink-rail",
+        "x": 13.5,
+        "z": -12.87,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "uplink-arc-refill",
+        "x": -12.39,
+        "z": 12.73,
+        "radius": 1.35
+      },
+      {
+        "type": "optionalObjective",
+        "id": "uplink-overcharge-a",
+        "x": 3.9,
+        "z": 11.65,
+        "radius": 4.65
+      },
+      {
+        "type": "optionalObjective",
+        "id": "uplink-overcharge-b",
+        "x": -5.85,
+        "z": -10.85,
+        "radius": 4.65
+      },
+      {
+        "type": "optionalObjective",
+        "id": "uplink-catwalk-cache",
+        "x": 10.55,
+        "z": 7.8,
+        "radius": 3.05
+      }
+    ],
+    "colliderViolations": [],
+    "pairViolations": []
+  },
+  "blackout-run": {
+    "placements": [
+      {
+        "type": "interactable",
+        "id": "reactor-switch",
+        "x": 0,
+        "z": -23,
+        "radius": 1.15
+      },
+      {
+        "type": "extraction",
+        "id": "Evac",
+        "x": 0,
+        "z": 24,
+        "radius": 2.95
+      },
+      {
+        "type": "jumpPad",
+        "id": "blackout-pad-1",
+        "x": -9,
+        "z": -12,
+        "radius": 2.2
+      },
+      {
+        "type": "jumpPad",
+        "id": "blackout-pad-2",
+        "x": 9,
+        "z": 0,
+        "radius": 2.2
+      },
+      {
+        "type": "weaponPickup",
+        "id": "blackout-plasma",
+        "x": 0.2,
+        "z": -9.65,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "blackout-scatter-refill",
+        "x": -6.03,
+        "z": -15.14,
+        "radius": 1.35
+      },
+      {
+        "type": "weaponPickup",
+        "id": "blackout-rail-refill",
+        "x": -3.17,
+        "z": 20.66,
+        "radius": 1.35
+      },
+      {
+        "type": "optionalObjective",
+        "id": "blackout-overload",
+        "x": 5.37,
+        "z": -3.7,
+        "radius": 2.65
+      },
+      {
+        "type": "optionalObjective",
+        "id": "blackout-escape-cache",
+        "x": 3.01,
+        "z": 1.26,
+        "radius": 2.55
+      },
+      {
+        "type": "optionalObjective",
+        "id": "blackout-hot-evac",
+        "x": -7.63,
+        "z": 25.6,
+        "radius": 3.25
+      }
+    ],
+    "colliderViolations": [],
+    "pairViolations": []
+  }
+}

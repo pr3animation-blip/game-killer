@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   AppliedUpgrade,
   BalanceSnapshot,
+  BossState,
   ComboState,
   GameOverStats,
   GameState,
@@ -52,6 +53,7 @@ const DEFAULT_LEVEL_SUMMARY: LevelSummary = {
 
 const DEFAULT_OBJECTIVE_STATE: ObjectiveState = {
   kind: "terminal-sequence",
+  phase: "objective",
   title: "",
   text: "",
   detail: "",
@@ -96,6 +98,8 @@ const DEFAULT_INVENTORY_STATE: InventoryState = {
   ammo: 0,
   reserveAmmo: 0,
   isReloading: false,
+  reloadProgress: 0,
+  reloadDuration: 0,
   chargeRatio: 0,
   reticleSpread: 0,
   isADS: false,
@@ -146,6 +150,19 @@ const DEFAULT_PERSONAL_BEST: PersonalBestSnapshot = {
 
 const DEFAULT_LEVEL_UP_CHOICE: LevelUpChoiceState = createInactiveLevelUpChoice();
 const DEFAULT_PROGRESSION: ProgressionState = createInitialProgressionState();
+const DEFAULT_BOSS_STATE: BossState = {
+  active: false,
+  introActive: false,
+  defeated: false,
+  id: null,
+  name: "",
+  weaponType: null,
+  health: 0,
+  maxHealth: 0,
+  phase: 1,
+  telegraph: null,
+  introText: null,
+};
 
 interface GameStore {
   // Player state
@@ -176,6 +193,7 @@ interface GameStore {
   // Enemy awareness
   threatAlert: ThreatAlert;
   radar: RadarState;
+  boss: BossState;
 
   // Objective run state
   currentLevel: LevelSummary;
@@ -200,6 +218,9 @@ interface GameStore {
   medalPace: MedalPaceState;
   personalBest: PersonalBestSnapshot;
   activeClassName: string | null;
+
+  // Damage vignette
+  damageFlash: number;
 
   // Leaderboard
   gameOverStats: GameOverStats | null;
@@ -226,6 +247,7 @@ interface GameStore {
   setLevelCompleteSummary: (summary: LevelCompleteSummary | null) => void;
   flashHitMarker: (isHeadshot?: boolean) => void;
   setGameOverStats: (stats: GameOverStats) => void;
+  flashDamageVignette: (intensity: number) => void;
   loadLeaderboard: () => void;
   saveToLeaderboard: (stats: GameOverStats) => void;
   reset: () => void;
@@ -249,6 +271,7 @@ export const useGameStore = create<GameStore>((set) => ({
   pickupPrompt: DEFAULT_PICKUP_PROMPT,
   threatAlert: DEFAULT_THREAT_ALERT,
   radar: DEFAULT_RADAR_STATE,
+  boss: DEFAULT_BOSS_STATE,
   currentLevel: DEFAULT_LEVEL_SUMMARY,
   objective: DEFAULT_OBJECTIVE_STATE,
   objectiveText: "",
@@ -271,6 +294,7 @@ export const useGameStore = create<GameStore>((set) => ({
   medalPace: DEFAULT_MEDAL_PACE,
   personalBest: DEFAULT_PERSONAL_BEST,
   activeClassName: null,
+  damageFlash: 0,
   gameOverStats: null,
   leaderboard: [],
 
@@ -313,6 +337,10 @@ export const useGameStore = create<GameStore>((set) => ({
     set({ showHitMarker: true, isHeadshotHit: isHeadshot ?? false });
     setTimeout(() => set({ showHitMarker: false, isHeadshotHit: false }), 150);
   },
+  flashDamageVignette: (intensity) => {
+    set({ damageFlash: Math.min(1, intensity) });
+    setTimeout(() => set({ damageFlash: 0 }), 200);
+  },
   setGameOverStats: (gameOverStats) => set({ gameOverStats }),
   loadLeaderboard: () => {
     try {
@@ -351,6 +379,7 @@ export const useGameStore = create<GameStore>((set) => ({
       pickupPrompt: DEFAULT_PICKUP_PROMPT,
       threatAlert: DEFAULT_THREAT_ALERT,
       radar: DEFAULT_RADAR_STATE,
+      boss: DEFAULT_BOSS_STATE,
       currentLevel: DEFAULT_LEVEL_SUMMARY,
       objective: DEFAULT_OBJECTIVE_STATE,
       objectiveText: "",
@@ -373,6 +402,7 @@ export const useGameStore = create<GameStore>((set) => ({
       medalPace: DEFAULT_MEDAL_PACE,
       personalBest: DEFAULT_PERSONAL_BEST,
       activeClassName: null,
+      damageFlash: 0,
       gameOverStats: null,
     }),
 }));

@@ -1,0 +1,9 @@
+dist-electron
+electron-dist
+electron
+.next
+out
+output
+*.png
+*.dmg
+*.app

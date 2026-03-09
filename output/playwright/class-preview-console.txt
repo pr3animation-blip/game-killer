@@ -1,0 +1,9 @@
+Total messages: 10 (Errors: 0, Warnings: 6)
+Returning 6 messages for level "warning"
+
+[WARNING] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures @ http://127.0.0.1:3000/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js:6756
+[WARNING] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures @ http://127.0.0.1:3000/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js:6756
+[WARNING] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. @ http://127.0.0.1:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. @ http://127.0.0.1:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures @ http://127.0.0.1:3000/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js:6756
+[WARNING] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures @ http://127.0.0.1:3000/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js:6756

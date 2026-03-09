@@ -1,0 +1,2994 @@
+{
+  "sprintFrame1": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.3,
+      "runTime": 0.3
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -12.39,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -12.39,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0,
+      "speed": 6.46,
+      "horizontalSpeed": 6.46,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.999,
+          "y": 0.051,
+          "distance": 23.6,
+          "clamped": true,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": 0.059,
+          "y": 0.998,
+          "distance": 24.4,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 11.19,
+          "y": 0,
+          "z": 11.3
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 10.31,
+          "y": 1.12,
+          "z": 10.46
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -10.95,
+          "y": 0,
+          "z": -11.82
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -9.76,
+          "y": 1.12,
+          "z": -11.55
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "sprintFrame12": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.4,
+      "runTime": 0.4
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -10.52,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -10.52,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.962,
+          "y": 0.076,
+          "distance": 21.2,
+          "clamped": false,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": 0.012,
+          "y": 1,
+          "distance": 24.2,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 10.64,
+          "y": 0,
+          "z": 10.82
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 9.76,
+          "y": 1.12,
+          "z": 9.98
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -10.23,
+          "y": 0,
+          "z": -11.69
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -9.04,
+          "y": 1.12,
+          "z": -11.42
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "preJump": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.6,
+      "runTime": 0.6
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -9.5,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -9.5,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": true,
+      "direction": "right",
+      "count": 1,
+      "distance": 19.9
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.901,
+          "y": 0.086,
+          "distance": 19.9,
+          "clamped": false,
+          "watching": true
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.014,
+          "y": 1,
+          "distance": 24.1,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "chase",
+        "health": 100,
+        "position": {
+          "x": 10.32,
+          "y": 0,
+          "z": 10.61
+        },
+        "lookDirection": {
+          "x": -0.99,
+          "y": 0.08,
+          "z": 0.09
+        },
+        "muzzle": {
+          "x": 9.1,
+          "y": 1.12,
+          "z": 10.67
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -9.83,
+          "y": 0,
+          "z": -11.62
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -8.65,
+          "y": 1.12,
+          "z": -11.36
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "postJump": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.8,
+      "runTime": 0.8
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -6.95,
+        "y": 1.33,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -6.95,
+        "y": 2.86,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "air",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 3,
+      "grounded": false,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": true,
+      "direction": "right",
+      "count": 1,
+      "distance": 16.4
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.74,
+          "y": 0.081,
+          "distance": 16.4,
+          "clamped": false,
+          "watching": true
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.079,
+          "y": 0.997,
+          "distance": 24,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "chase",
+        "health": 100,
+        "position": {
+          "x": 9.32,
+          "y": 0,
+          "z": 10.71
+        },
+        "lookDirection": {
+          "x": -0.98,
+          "y": 0.15,
+          "z": 0.11
+        },
+        "muzzle": {
+          "x": 8.12,
+          "y": 1.2,
+          "z": 10.79
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -8.85,
+          "y": 0,
+          "z": -11.45
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -7.66,
+          "y": 1.12,
+          "z": -11.18
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "airStrafe": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 1.1,
+      "runTime": 1.1
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -4.4,
+        "y": 1.42,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -4.4,
+        "y": 2.95,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "air",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": -2,
+      "grounded": false,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": true,
+      "direction": "right",
+      "count": 1,
+      "distance": 12.8
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.579,
+          "y": 0.076,
+          "distance": 12.8,
+          "clamped": false,
+          "watching": true
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.144,
+          "y": 0.99,
+          "distance": 24,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "chase",
+        "health": 100,
+        "position": {
+          "x": 8.33,
+          "y": 0,
+          "z": 10.83
+        },
+        "lookDirection": {
+          "x": -0.97,
+          "y": 0.2,
+          "z": 0.13
+        },
+        "muzzle": {
+          "x": 7.15,
+          "y": 1.27,
+          "z": 10.93
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -7.86,
+          "y": 0,
+          "z": -11.28
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -6.68,
+          "y": 1.12,
+          "z": -11.01
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "slide": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.8,
+      "runTime": 0.8
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -7.7,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -7.7,
+        "y": 0.9,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "slide",
+      "dashCooldown": 0,
+      "speed": 7.3,
+      "horizontalSpeed": 7.3,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.791,
+          "y": 0.11,
+          "distance": 17.6,
+          "clamped": false,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.056,
+          "y": 0.998,
+          "distance": 24,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 9.71,
+          "y": 0,
+          "z": 10.09
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 8.84,
+          "y": 1.12,
+          "z": 9.25
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -9.04,
+          "y": 0,
+          "z": -11.49
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -7.86,
+          "y": 1.12,
+          "z": -11.22
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "slideJump": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 1,
+      "runTime": 1
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -5.8,
+        "y": 1.23,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -5.8,
+        "y": 2.76,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "air",
+      "dashCooldown": 0,
+      "speed": 8.76,
+      "horizontalSpeed": 8.76,
+      "verticalSpeed": 3.67,
+      "grounded": false,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": true,
+      "direction": "right",
+      "count": 1,
+      "distance": 14.8
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.666,
+          "y": 0.104,
+          "distance": 14.8,
+          "clamped": false,
+          "watching": true
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.1,
+          "y": 0.995,
+          "distance": 24,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "chase",
+        "health": 100,
+        "position": {
+          "x": 8.86,
+          "y": 0,
+          "z": 10.21
+        },
+        "lookDirection": {
+          "x": -0.98,
+          "y": 0.15,
+          "z": 0.15
+        },
+        "muzzle": {
+          "x": 7.66,
+          "y": 1.2,
+          "z": 10.34
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -8.19,
+          "y": 0,
+          "z": -11.34
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -7,
+          "y": 1.12,
+          "z": -11.07
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "dashImmediate": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.4,
+      "runTime": 0.4
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -9.22,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -9.22,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "dash",
+      "dashCooldown": 1.17,
+      "speed": 13,
+      "horizontalSpeed": 13,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.91,
+          "y": 0.07,
+          "distance": 20.1,
+          "clamped": false,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.05,
+          "y": 0.999,
+          "distance": 24.3,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 10.79,
+          "y": 0,
+          "z": 10.95
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 9.91,
+          "y": 1.12,
+          "z": 10.11
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -10.42,
+          "y": 0,
+          "z": -11.73
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -9.24,
+          "y": 1.12,
+          "z": -11.46
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "dashRecover": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.7,
+      "runTime": 0.7
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -6.14,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -6.14,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0.87,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": true,
+      "direction": "right",
+      "count": 1,
+      "distance": 15.8
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.715,
+          "y": 0.066,
+          "distance": 15.8,
+          "clamped": false,
+          "watching": true
+        },
+        {
+          "id": "relay-bot-2",
+          "x": -0.128,
+          "y": 0.992,
+          "distance": 24.2,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "chase",
+        "health": 100,
+        "position": {
+          "x": 9.59,
+          "y": 0,
+          "z": 11.06
+        },
+        "lookDirection": {
+          "x": -0.99,
+          "y": 0.08,
+          "z": 0.09
+        },
+        "muzzle": {
+          "x": 8.38,
+          "y": 1.12,
+          "z": 11.11
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -9.24,
+          "y": 0,
+          "z": -11.52
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -8.05,
+          "y": 1.12,
+          "z": -11.25
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "reverse8": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.5,
+      "runTime": 0.5
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -11.57,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -11.57,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.997,
+          "y": 0.077,
+          "distance": 22.2,
+          "clamped": true,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": 0.058,
+          "y": 0.998,
+          "distance": 24.2,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 10.59,
+          "y": 0,
+          "z": 10.78
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 9.71,
+          "y": 1.12,
+          "z": 9.94
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -10.16,
+          "y": 0,
+          "z": -11.68
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -8.97,
+          "y": 1.12,
+          "z": -11.41
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  },
+  "reverse16": {
+    "coordinateSystem": "x:right y:up z:forward-negative",
+    "state": "playing",
+    "level": {
+      "id": "relay-loop",
+      "name": "Relay Loop",
+      "index": 1,
+      "total": 3,
+      "levelTime": 0.6,
+      "runTime": 0.6
+    },
+    "player": {
+      "alive": true,
+      "health": 100,
+      "position": {
+        "x": -12.93,
+        "y": 0,
+        "z": 12.5
+      },
+      "eye": {
+        "x": -12.93,
+        "y": 1.53,
+        "z": 12.5
+      },
+      "forward": {
+        "x": 0,
+        "y": 0,
+        "z": -1
+      },
+      "movementState": "sprint",
+      "dashCooldown": 0,
+      "speed": 10.2,
+      "horizontalSpeed": 10.2,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "cameraRecoil": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0,
+        "back": 0,
+        "drop": 0
+      }
+    },
+    "inventory": {
+      "slots": [
+        {
+          "index": 0,
+          "weaponId": "vanguard-carbine",
+          "name": "Vanguard Carbine",
+          "shortName": "Carbine",
+          "ammo": 28,
+          "reserveAmmo": 112
+        },
+        {
+          "index": 1,
+          "weaponId": null,
+          "name": null,
+          "shortName": null,
+          "ammo": null,
+          "reserveAmmo": null
+        }
+      ],
+      "activeSlot": 0,
+      "activeWeaponId": "vanguard-carbine",
+      "activeWeaponName": "Vanguard Carbine",
+      "fireMode": "auto",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "isReloading": false,
+      "chargeRatio": 0,
+      "reticleSpread": 0.18
+    },
+    "activeWeapon": {
+      "weaponId": "vanguard-carbine",
+      "name": "Vanguard Carbine",
+      "ammo": 28,
+      "reserveAmmo": 112,
+      "fireMode": "auto",
+      "chargeRatio": 0,
+      "reloading": false
+    },
+    "pickupPrompt": {
+      "active": false,
+      "pickupId": null,
+      "weaponId": null,
+      "label": "",
+      "action": "pickup",
+      "text": "",
+      "progress": 0
+    },
+    "objective": {
+      "kind": "terminal-sequence",
+      "title": "Relay Loop",
+      "text": "Activate Terminal A",
+      "detail": "Boot the west relay and expose the next lane.",
+      "progress": "0/3 terminals synced",
+      "interactPrompt": null,
+      "activeInteractableId": "relay-terminal-a",
+      "activeHoldZoneId": null,
+      "escapeTimer": null
+    },
+    "interactables": [
+      {
+        "id": "relay-terminal-a",
+        "label": "Terminal A",
+        "hint": "Boot the west relay and expose the next lane.",
+        "active": true,
+        "completed": false,
+        "position": {
+          "x": -12,
+          "y": 0.1,
+          "z": -11
+        }
+      },
+      {
+        "id": "relay-terminal-b",
+        "label": "Terminal B",
+        "hint": "Bridge the east choke and draw security off center.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 13,
+          "y": 0.1,
+          "z": -10
+        }
+      },
+      {
+        "id": "relay-terminal-c",
+        "label": "Terminal C",
+        "hint": "Prime the final node to arm the extraction beacon.",
+        "active": false,
+        "completed": false,
+        "position": {
+          "x": 10,
+          "y": 0.1,
+          "z": 11
+        }
+      }
+    ],
+    "holdZones": [],
+    "extraction": {
+      "unlocked": false,
+      "hint": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": 0,
+      "position": {
+        "x": -14.5,
+        "y": 0.1,
+        "z": 15
+      }
+    },
+    "jumpPads": [
+      {
+        "id": "relay-pad-1",
+        "label": "Lift Pad",
+        "position": {
+          "x": -13,
+          "y": 0.1,
+          "z": 9
+        }
+      }
+    ],
+    "weaponPickups": [
+      {
+        "id": "relay-arc-smg",
+        "label": "Arc SMG",
+        "weaponId": "arc-smg",
+        "claimed": false,
+        "position": {
+          "x": -16.03,
+          "y": 0.1,
+          "z": 5.92
+        }
+      },
+      {
+        "id": "relay-scattershot",
+        "label": "Scattershot",
+        "weaponId": "scattershot",
+        "claimed": false,
+        "position": {
+          "x": -2.15,
+          "y": 0.1,
+          "z": -5.64
+        }
+      },
+      {
+        "id": "relay-carbine-refill",
+        "label": "Carbine Refill",
+        "weaponId": "vanguard-carbine",
+        "claimed": false,
+        "position": {
+          "x": 14.03,
+          "y": 0.1,
+          "z": -0.8
+        }
+      }
+    ],
+    "projectiles": [],
+    "awareness": {
+      "active": false,
+      "direction": "front",
+      "count": 0,
+      "distance": 0
+    },
+    "radar": {
+      "range": 22,
+      "contacts": [
+        {
+          "id": "relay-bot-1",
+          "x": 0.996,
+          "y": 0.089,
+          "distance": 23.2,
+          "clamped": true,
+          "watching": false
+        },
+        {
+          "id": "relay-bot-2",
+          "x": 0.136,
+          "y": 0.991,
+          "distance": 24.3,
+          "clamped": true,
+          "watching": false
+        }
+      ]
+    },
+    "bots": [
+      {
+        "id": "relay-bot-1",
+        "name": "Botrelay-bot-1",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": 10.18,
+          "y": 0,
+          "z": 10.43
+        },
+        "lookDirection": {
+          "x": -0.75,
+          "y": 0.08,
+          "z": -0.65
+        },
+        "muzzle": {
+          "x": 9.3,
+          "y": 1.12,
+          "z": 9.59
+        }
+      },
+      {
+        "id": "relay-bot-2",
+        "name": "Botrelay-bot-2",
+        "state": "patrol",
+        "health": 100,
+        "position": {
+          "x": -9.64,
+          "y": 0,
+          "z": -11.59
+        },
+        "lookDirection": {
+          "x": 0.98,
+          "y": 0.08,
+          "z": 0.17
+        },
+        "muzzle": {
+          "x": -8.45,
+          "y": 1.12,
+          "z": -11.32
+        }
+      }
+    ],
+    "score": 0,
+    "deaths": 0,
+    "levelComplete": null
+  }
+}

@@ -2,12 +2,12 @@ import * as THREE from "three";
 import { raycast } from "./physics";
 import { InputSnapshot } from "./input";
 import {
-  BotData,
   InventoryState,
   ProjectileState,
   WeaponCameraRecoilProfile,
   WeaponFireMode,
   WeaponId,
+  WeaponLoadoutSnapshot,
   RuntimeModifiers,
 } from "./types";
 import {
@@ -82,7 +82,7 @@ export interface WeaponProjectileImpact {
   radius: number;
   directDamage: number;
   splashDamage: number;
-  directEntity: BotData | null;
+  directHitObject: THREE.Object3D | null;
 }
 
 type PickupWeaponResult =
@@ -127,6 +127,9 @@ export class WeaponSystem {
   private projectileIdCounter = 0;
   private runtimeModifiers: RuntimeModifiers = { ...DEFAULT_RUNTIME_MODIFIERS };
   private goldenChamberReady: [boolean, boolean, boolean] = [false, false, false];
+  private swapPhase: "idle" | "lowering" | "raising" = "idle";
+  private swapProgress = 0;
+  private pendingSwapSlot = -1;
 
   constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
     this.scene = scene;
@@ -267,8 +270,24 @@ export class WeaponSystem {
       }
     }
 
+    // Weapon swap animation
+    if (this.swapPhase === "lowering") {
+      this.swapProgress = THREE.MathUtils.damp(this.swapProgress, 1, 12, dt);
+      if (this.swapProgress > 0.95) {
+        this.swapProgress = 1;
+        this.activeSlotIndex = this.pendingSwapSlot;
+        this.syncViewModelVisibility();
+        this.swapPhase = "raising";
+      }
+    } else if (this.swapPhase === "raising") {
+      this.swapProgress = THREE.MathUtils.damp(this.swapProgress, 0, 10, dt);
+      if (this.swapProgress < 0.03) {
+        this.swapProgress = 0;
+        this.swapPhase = "idle";
+      }
+    }
+
     this.recoilKick = THREE.MathUtils.damp(this.recoilKick, 0, 16, dt);
-    this.reticleKick = THREE.MathUtils.damp(this.reticleKick, 0, RETICLE_KICK_DAMP, dt);
     this.sway.x = THREE.MathUtils.damp(
       this.sway.x,
       THREE.MathUtils.clamp(input.mouseDeltaX * 0.0008, -0.04, 0.04),
@@ -287,8 +306,9 @@ export class WeaponSystem {
     this.inertiaOffset.x = THREE.MathUtils.damp(this.inertiaOffset.x, inertiaTargetX, 8, dt);
     this.inertiaOffset.y = THREE.MathUtils.damp(this.inertiaOffset.y, inertiaTargetY, 8, dt);
 
-    const adsTarget = input.ads && !this.reloading ? 1 : 0;
-    this.adsProgress = THREE.MathUtils.damp(this.adsProgress, adsTarget, ADS_LERP_SPEED, dt);
+    const adsTarget = input.ads && !this.reloading && this.swapPhase === "idle" ? 1 : 0;
+    const adsSpeed = this.activeDefinition?.adsSpeed ?? ADS_LERP_SPEED;
+    this.adsProgress = THREE.MathUtils.damp(this.adsProgress, adsTarget, adsSpeed, dt);
     if (this.adsProgress < 0.001) this.adsProgress = 0;
     if (this.adsProgress > 0.999) this.adsProgress = 1;
 
@@ -330,7 +350,6 @@ export class WeaponSystem {
 
         if (directHit || worldHit) {
           const impactPoint = (directHit?.point ?? worldHit?.point)?.clone();
-          const impactEntity = directHit ? ((directHit.object.userData as BotData) ?? null) : null;
           if (impactPoint) {
             impacts.push({
               weaponId: projectile.weaponId,
@@ -339,7 +358,7 @@ export class WeaponSystem {
               radius: projectile.splashRadius,
               directDamage: projectile.directDamage,
               splashDamage: projectile.splashDamage,
-              directEntity: impactEntity,
+              directHitObject: directHit?.object ?? null,
             });
           }
           this.removeProjectileAt(i);
@@ -585,12 +604,14 @@ export class WeaponSystem {
 
   selectSlot(index: number): boolean {
     if (index < 0 || index > 2) return false;
-    if (index === this.activeSlotIndex) return false;
+    if (index === this.activeSlotIndex && this.swapPhase === "idle") return false;
     if (!this.slots[index]) return false;
 
-    this.activeSlotIndex = index;
+    if (this.swapPhase !== "idle") return false;
+    this.pendingSwapSlot = index;
+    this.swapPhase = "lowering";
+    this.swapProgress = 0;
     this.cancelTransientState();
-    this.syncViewModelVisibility();
     return true;
   }
 
@@ -661,6 +682,54 @@ export class WeaponSystem {
     this.syncViewModelVisibility();
   }
 
+  createLoadoutSnapshot(): WeaponLoadoutSnapshot {
+    return {
+      slots: this.slots.map((slot, index) => ({
+        weaponId: slot?.id ?? null,
+        ammo: slot?.ammo ?? 0,
+        reserveAmmo: slot?.reserveAmmo ?? 0,
+        goldenChamberReady: this.goldenChamberReady[index],
+      })),
+      activeSlot: this.activeSlotIndex,
+    };
+  }
+
+  restoreLoadoutSnapshot(snapshot: WeaponLoadoutSnapshot): void {
+    this.clearTransientState();
+    this.removeAllProjectiles();
+    this.removeAllTraces();
+    this.slots = [
+      snapshot.slots[0]?.weaponId ? createWeaponInstance(snapshot.slots[0].weaponId) : null,
+      snapshot.slots[1]?.weaponId ? createWeaponInstance(snapshot.slots[1].weaponId) : null,
+      snapshot.slots[2]?.weaponId ? createWeaponInstance(snapshot.slots[2].weaponId) : null,
+    ];
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      const source = snapshot.slots[i];
+      if (!slot || !source) continue;
+      slot.ammo = source.ammo;
+      slot.reserveAmmo = source.reserveAmmo;
+      this.goldenChamberReady[i] = source.goldenChamberReady;
+    }
+    this.activeSlotIndex = THREE.MathUtils.clamp(snapshot.activeSlot, 0, 2);
+    if (!this.slots[this.activeSlotIndex]) {
+      const fallbackIndex = this.slots.findIndex((slot) => slot !== null);
+      this.activeSlotIndex = fallbackIndex === -1 ? 0 : fallbackIndex;
+    }
+    this.syncViewModelVisibility();
+  }
+
+  refillAllAmmoToFull(): void {
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      if (!slot) continue;
+      const def = getWeaponDefinition(slot.id);
+      slot.ammo = this.getMagazineCapacity(slot.id);
+      slot.reserveAmmo = def.maxReserveAmmo;
+      this.goldenChamberReady[i] = false;
+    }
+  }
+
   getInventoryState(): InventoryState {
     const activeDef = this.activeDefinition;
     return {
@@ -682,6 +751,12 @@ export class WeaponSystem {
       ammo: this.ammo,
       reserveAmmo: this.reserveAmmo,
       isReloading: this.reloading,
+      reloadProgress: this.reloading && activeDef
+        ? 1 - this.reloadTimer / (activeDef.reloadTime / this.runtimeModifiers.reloadSpeedMultiplier)
+        : 0,
+      reloadDuration: this.reloading && activeDef
+        ? activeDef.reloadTime / this.runtimeModifiers.reloadSpeedMultiplier
+        : 0,
       chargeRatio:
         activeDef?.fireMode === "charge" && activeDef.chargeTime
           ? Number((this.chargeTimer / activeDef.chargeTime).toFixed(3))
@@ -936,6 +1011,7 @@ export class WeaponSystem {
       this.fireCooldown <= 0 &&
       !this.reloading &&
       this.queuedBurstShots === 0 &&
+      this.swapPhase === "idle" &&
       this.hasAmmoForShot()
     );
   }
@@ -983,6 +1059,23 @@ export class WeaponSystem {
     this.tempOffset.x += bobX - this.sway.x * 1.4 * hipFactor + this.inertiaOffset.x * hipFactor;
     this.tempOffset.y += bobY + this.sway.y * 0.8 * hipFactor - this.recoilKick * 0.045 + this.inertiaOffset.y * hipFactor;
     this.tempOffset.z -= this.recoilKick * 0.11;
+
+    // Weapon swap animation offset
+    const swapOffset = this.swapProgress * -0.35;
+    this.tempOffset.y += swapOffset;
+
+    // Reload animation offset
+    let reloadTiltX = 0;
+    let reloadTiltZ = 0;
+    if (this.reloading && this.activeDefinition) {
+      const totalTime = this.activeDefinition.reloadTime;
+      const progress = 1 - (this.reloadTimer / totalTime);
+      const curve = Math.sin(progress * Math.PI);
+      this.tempOffset.y -= curve * 0.15;
+      reloadTiltX = curve * 0.12;
+      reloadTiltZ = curve * 0.25;
+    }
+
     this.tempOffset.applyQuaternion(this.camera.quaternion);
 
     viewModel.position.copy(this.camera.position).add(this.tempOffset);
@@ -994,10 +1087,11 @@ export class WeaponSystem {
     const adsRollBase = 0;
     this.tempEuler.set(
       THREE.MathUtils.lerp(hipPitchBase, adsPitchBase, ads)
-        - this.sway.y * 1.3 * hipFactor + this.recoilKick * 0.14 + bobY * 0.6 * hipFactor + this.inertiaOffset.y * 0.8 * hipFactor,
+        - this.sway.y * 1.3 * hipFactor + this.recoilKick * 0.14 + bobY * 0.6 * hipFactor + this.inertiaOffset.y * 0.8 * hipFactor
+        + this.swapProgress * 0.3 + reloadTiltX,
       (this.sway.x * 0.55 + this.inertiaOffset.x * 0.6) * hipFactor,
       THREE.MathUtils.lerp(hipRollBase, adsRollBase, ads)
-        - this.sway.x * 1.8 * hipFactor + bobX * 6 * hipFactor
+        - this.sway.x * 1.8 * hipFactor + bobX * 6 * hipFactor + reloadTiltZ
     );
     this.tempRotation.setFromEuler(this.tempEuler);
     viewModel.quaternion.copy(this.camera.quaternion).multiply(this.tempRotation);
@@ -1015,7 +1109,8 @@ export class WeaponSystem {
         this.tracers.splice(i, 1);
         continue;
       }
-      tracer.material.opacity = Math.max(0.25, tracer.life / tracer.lifetime);
+      const ratio = tracer.life / tracer.lifetime;
+      tracer.material.opacity = Math.max(0.15, ratio * ratio);
     }
   }
 

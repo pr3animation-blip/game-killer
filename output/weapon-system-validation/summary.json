@@ -1,0 +1,87 @@
+[
+  {
+    "label": "starter weapon",
+    "ok": true,
+    "detail": "[{\"index\":0,\"weaponId\":\"vanguard-carbine\",\"name\":\"Vanguard Carbine\",\"shortName\":\"Carbine\",\"ammo\":28,\"reserveAmmo\":112},{\"index\":1,\"weaponId\":null,\"name\":null,\"shortName\":null,\"ammo\":null,\"reserveAmmo\":null}]"
+  },
+  {
+    "label": "empty second slot",
+    "ok": true,
+    "detail": "[{\"index\":0,\"weaponId\":\"vanguard-carbine\",\"name\":\"Vanguard Carbine\",\"shortName\":\"Carbine\",\"ammo\":28,\"reserveAmmo\":112},{\"index\":1,\"weaponId\":null,\"name\":null,\"shortName\":null,\"ammo\":null,\"reserveAmmo\":null}]"
+  },
+  {
+    "label": "arc pickup fills slot 2",
+    "ok": true,
+    "detail": "[{\"index\":0,\"weaponId\":\"vanguard-carbine\",\"name\":\"Vanguard Carbine\",\"shortName\":\"Carbine\",\"ammo\":28,\"reserveAmmo\":112},{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":144}]"
+  },
+  {
+    "label": "scatter prompt appears with full loadout",
+    "ok": true,
+    "detail": "{\"active\":true,\"pickupId\":\"relay-scattershot\",\"weaponId\":\"scattershot\",\"label\":\"Scattershot\",\"action\":\"replace\",\"text\":\"Hold E to replace Vanguard Carbine with Scattershot\",\"progress\":0}"
+  },
+  {
+    "label": "scatter prompt targets scattershot",
+    "ok": true,
+    "detail": "{\"active\":true,\"pickupId\":\"relay-scattershot\",\"weaponId\":\"scattershot\",\"label\":\"Scattershot\",\"action\":\"replace\",\"text\":\"Hold E to replace Vanguard Carbine with Scattershot\",\"progress\":0}"
+  },
+  {
+    "label": "replace prompt shown",
+    "ok": true,
+    "detail": "{\"active\":true,\"pickupId\":\"uplink-helix\",\"weaponId\":\"helix-burst-rifle\",\"label\":\"Helix Burst Rifle\",\"action\":\"replace\",\"text\":\"Hold E to replace Vanguard Carbine with Helix Burst Rifle\",\"progress\":0}"
+  },
+  {
+    "label": "replace prompt targets helix",
+    "ok": true,
+    "detail": "{\"active\":true,\"pickupId\":\"uplink-helix\",\"weaponId\":\"helix-burst-rifle\",\"label\":\"Helix Burst Rifle\",\"action\":\"replace\",\"text\":\"Hold E to replace Vanguard Carbine with Helix Burst Rifle\",\"progress\":0}"
+  },
+  {
+    "label": "active slot replaced with helix",
+    "ok": true,
+    "detail": "[{\"index\":0,\"weaponId\":\"helix-burst-rifle\",\"name\":\"Helix Burst Rifle\",\"shortName\":\"Helix\",\"ammo\":24,\"reserveAmmo\":96},{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":144}]"
+  },
+  {
+    "label": "duplicate pickup adds one full arc magazine",
+    "ok": true,
+    "detail": "{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":136}"
+  },
+  {
+    "label": "quick swap changes active slot",
+    "ok": true,
+    "detail": "{\"slots\":[{\"index\":0,\"weaponId\":\"helix-burst-rifle\",\"name\":\"Helix Burst Rifle\",\"shortName\":\"Helix\",\"ammo\":24,\"reserveAmmo\":96},{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":136}],\"activeSlot\":1,\"activeWeaponId\":\"arc-smg\",\"activeWeaponName\":\"Arc SMG\",\"fireMode\":\"auto\",\"ammo\":36,\"reserveAmmo\":136,\"isReloading\":false,\"chargeRatio\":0,\"reticleSpread\":0.4}"
+  },
+  {
+    "label": "digit 1 reselects slot 1",
+    "ok": true,
+    "detail": "{\"slots\":[{\"index\":0,\"weaponId\":\"helix-burst-rifle\",\"name\":\"Helix Burst Rifle\",\"shortName\":\"Helix\",\"ammo\":24,\"reserveAmmo\":96},{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":136}],\"activeSlot\":0,\"activeWeaponId\":\"helix-burst-rifle\",\"activeWeaponName\":\"Helix Burst Rifle\",\"fireMode\":\"burst\",\"ammo\":24,\"reserveAmmo\":96,\"isReloading\":false,\"chargeRatio\":0,\"reticleSpread\":0.15}"
+  },
+  {
+    "label": "helix fires a 3-round burst",
+    "ok": true,
+    "detail": "{\"index\":0,\"weaponId\":\"helix-burst-rifle\",\"name\":\"Helix Burst Rifle\",\"shortName\":\"Helix\",\"ammo\":21,\"reserveAmmo\":96}"
+  },
+  {
+    "label": "rail equipped",
+    "ok": true,
+    "detail": "[{\"index\":0,\"weaponId\":\"rail-lance\",\"name\":\"Rail Lance\",\"shortName\":\"Rail\",\"ammo\":4,\"reserveAmmo\":20},{\"index\":1,\"weaponId\":\"arc-smg\",\"name\":\"Arc SMG\",\"shortName\":\"Arc SMG\",\"ammo\":36,\"reserveAmmo\":136}]"
+  },
+  {
+    "label": "rail consumes one round after charge release",
+    "ok": true,
+    "detail": "{\"index\":0,\"weaponId\":\"rail-lance\",\"name\":\"Rail Lance\",\"shortName\":\"Rail\",\"ammo\":4,\"reserveAmmo\":20}"
+  },
+  {
+    "label": "plasma shot consumes ammo",
+    "ok": true,
+    "detail": "{\"index\":0,\"weaponId\":\"plasma-lobber\",\"name\":\"Plasma Lobber\",\"shortName\":\"Plasma\",\"ammo\":4,\"reserveAmmo\":18}"
+  },
+  {
+    "label": "plasma spawns a live projectile",
+    "ok": true,
+    "detail": "[{\"id\":\"projectile-0\",\"weaponId\":\"plasma-lobber\",\"position\":{\"x\":1.13,\"y\":1.42,\"z\":2.08},\"velocity\":{\"x\":0,\"y\":5.39,\"z\":-23.28},\"radius\":0.18,\"age\":0.03,\"maxAge\":3.8}]"
+  },
+  {
+    "label": "scattershot consumes one shell",
+    "ok": true,
+    "detail": "{\"index\":0,\"weaponId\":\"scattershot\",\"name\":\"Scattershot\",\"shortName\":\"Scatter\",\"ammo\":7,\"reserveAmmo\":32}"
+  }
+]

@@ -2,16 +2,25 @@ import * as THREE from "three";
 import {
   ArenaCollider,
   BotSpawnDefinition,
+  BossLockdownSegmentDefinition,
   ExtractionZone,
   HoldZoneDefinition,
   Interactable,
   JumpPad,
   LevelDefinition,
+  OptionalObjectiveDefinition,
   SpawnPoint,
   WeaponPickupDefinition,
 } from "./types";
 import { getWeaponDefinition } from "./weapons";
-import { createFloorTexture, createWallTexture, createStructureTexture } from "./textures";
+import {
+  SurfaceTextureSet,
+  createDustSpriteTexture,
+  createFloorTexture,
+  createSkyEnvironmentTexture,
+  createStructureTexture,
+  createWallTexture,
+} from "./textures";
 
 export interface ArenaInteractableVisual {
   def: Interactable;
@@ -71,6 +80,7 @@ export interface Arena {
   jumpPads: ArenaJumpPadVisual[];
   weaponPickups: ArenaWeaponPickupVisual[];
   extraction: ArenaExtractionVisual;
+  updateDust: (time: number) => void;
 }
 
 type PickupOccupiedArea =
@@ -82,6 +92,12 @@ type PickupOccupiedArea =
 
 const UP = new THREE.Vector3(0, 1, 0);
 const DEFAULT_PICKUP_CLEARANCE = 1.35;
+const INTERACTABLE_CLEARANCE = 1.05;
+const INTERACTABLE_OCCUPANCY_RADIUS = 1.15;
+const HOLD_ZONE_MARGIN = 0.85;
+const EXTRACTION_MARGIN = 0.85;
+const JUMP_PAD_MARGIN = 0.7;
+const OPTIONAL_OBJECTIVE_MARGIN = 0.85;
 
 function createBox(
   parent: THREE.Object3D,
@@ -92,13 +108,24 @@ function createBox(
   y: number,
   z: number,
   color: number,
-  texture?: THREE.Texture
+  textures?: SurfaceTextureSet,
+  materialOverrides?: Partial<THREE.MeshPhysicalMaterialParameters>
 ): ArenaCollider {
   const geo = new THREE.BoxGeometry(w, h, d);
-  const mat = new THREE.MeshStandardMaterial({
+  const mat = new THREE.MeshPhysicalMaterial({
     color,
-    roughness: 0.78,
-    ...(texture ? { map: texture } : {}),
+    roughness: 0.76,
+    metalness: 0.18,
+    bumpScale: 0.08,
+    envMapIntensity: 0.42,
+    ...(textures
+      ? {
+          map: textures.map,
+          bumpMap: textures.bumpMap,
+          roughnessMap: textures.roughnessMap,
+        }
+      : {}),
+    ...materialOverrides,
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(x, y + h / 2, z);
@@ -113,10 +140,149 @@ function createBox(
   };
 }
 
+export function createBossLockdownSegment(
+  parent: THREE.Object3D,
+  def: BossLockdownSegmentDefinition
+): ArenaCollider {
+  return createBox(
+    parent,
+    def.size.x,
+    def.size.y,
+    def.size.z,
+    def.position.x,
+    def.position.y - def.size.y / 2,
+    def.position.z,
+    def.color,
+    undefined,
+    {
+      transparent: true,
+      opacity: 0.7,
+      emissive: def.color,
+      emissiveIntensity: 1.15,
+      roughness: 0.18,
+      metalness: 0.38,
+      clearcoat: 0.52,
+      clearcoatRoughness: 0.2,
+    }
+  );
+}
+
+function addPerimeterGlow(
+  parent: THREE.Object3D,
+  halfX: number,
+  halfZ: number,
+  wallHeight: number
+): void {
+  const pylonMaterial = new THREE.MeshStandardMaterial({
+    color: 0x2a3344,
+    roughness: 0.44,
+    metalness: 0.72,
+  });
+  const stripMaterial = new THREE.MeshStandardMaterial({
+    color: 0xb8d7ff,
+    emissive: 0x6aa6ff,
+    emissiveIntensity: 1.3,
+    roughness: 0.28,
+    metalness: 0.22,
+  });
+
+  const positions = [
+    new THREE.Vector3(-halfX + 1.3, wallHeight * 0.44, -halfZ + 1.3),
+    new THREE.Vector3(halfX - 1.3, wallHeight * 0.44, -halfZ + 1.3),
+    new THREE.Vector3(-halfX + 1.3, wallHeight * 0.44, halfZ - 1.3),
+    new THREE.Vector3(halfX - 1.3, wallHeight * 0.44, halfZ - 1.3),
+  ];
+
+  for (const position of positions) {
+    const group = new THREE.Group();
+    group.position.copy(position);
+
+    const pylon = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3, 1.8, 0.3),
+      pylonMaterial
+    );
+    const strip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.12, 1.2, 0.08),
+      stripMaterial
+    );
+    strip.position.z = 0.17;
+
+    const light = new THREE.PointLight(0x6ea7ff, 0.95, 14, 2);
+    light.position.set(0, 0.22, 0.45);
+
+    pylon.castShadow = true;
+    pylon.receiveShadow = true;
+    group.add(pylon, strip, light);
+    parent.add(group);
+  }
+}
+
+function addDustField(parent: THREE.Object3D, floorSize: THREE.Vector2): (time: number) => void {
+  const count = 120;
+  const positions = new Float32Array(count * 3);
+  const basePositions = new Float32Array(count * 3);
+  const rand = (() => {
+    let seed = 901;
+    return () => {
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      return (seed >>> 0) / 0xffffffff;
+    };
+  })();
+
+  for (let i = 0; i < count; i++) {
+    const x = (rand() - 0.5) * floorSize.x;
+    const y = 0.8 + rand() * 4.2;
+    const z = (rand() - 0.5) * floorSize.y;
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
+    basePositions[i * 3] = x;
+    basePositions[i * 3 + 1] = y;
+    basePositions[i * 3 + 2] = z;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+  const material = new THREE.PointsMaterial({
+    map: createDustSpriteTexture(),
+    color: 0xcfe4ff,
+    size: 0.24,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.1,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const dust = new THREE.Points(geometry, material);
+  dust.position.y = 0.15;
+  parent.add(dust);
+
+  return (time: number) => {
+    const posAttr = geometry.attributes.position;
+    for (let i = 0; i < count; i++) {
+      const offset = i * 0.73;
+      posAttr.setXYZ(
+        i,
+        basePositions[i * 3] + Math.sin(time * 0.3 + offset) * 0.15,
+        basePositions[i * 3 + 1] + Math.sin(time * 0.2 + offset * 1.3) * 0.08,
+        basePositions[i * 3 + 2] + Math.cos(time * 0.25 + offset * 0.7) * 0.12
+      );
+    }
+    posAttr.needsUpdate = true;
+  };
+}
+
 export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
   const root = new THREE.Group();
   root.name = `arena-${level.id}`;
   scene.add(root);
+
+  const skyTexture = createSkyEnvironmentTexture(level.backgroundColor);
+  scene.background = skyTexture;
+  scene.environment = skyTexture;
+  scene.fog = new THREE.Fog(0x101a29, 18, level.fogFar + 10);
 
   const colliders: ArenaCollider[] = [];
   const wallMeshes: THREE.Mesh[] = [];
@@ -124,12 +290,20 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
   const floorGeo = new THREE.PlaneGeometry(level.floorSize.x, level.floorSize.y);
   const floorTex = createFloorTexture(level.floorColor);
   const tileScale = Math.max(level.floorSize.x, level.floorSize.y) / 8;
-  floorTex.repeat.set(tileScale, tileScale);
-  const floorMat = new THREE.MeshStandardMaterial({
-    map: floorTex,
-    color: level.floorColor,
-    roughness: 0.92,
+  floorTex.map.repeat.set(tileScale, tileScale);
+  floorTex.bumpMap.repeat.set(tileScale, tileScale);
+  floorTex.roughnessMap.repeat.set(tileScale, tileScale);
+  const floorMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    map: floorTex.map,
+    bumpMap: floorTex.bumpMap,
+    roughnessMap: floorTex.roughnessMap,
+    roughness: 0.9,
     metalness: 0.08,
+    bumpScale: 0.08,
+    clearcoat: 0.12,
+    clearcoatRoughness: 0.58,
+    envMapIntensity: 0.58,
   });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
@@ -154,9 +328,18 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
   ];
 
   const wallTex = createWallTexture(0x5a6477);
-  wallTex.repeat.set(2, 1);
+  wallTex.map.repeat.set(2, 1);
+  wallTex.bumpMap.repeat.set(2, 1);
+  wallTex.roughnessMap.repeat.set(2, 1);
   for (const def of boundaryWalls) {
-    const wall = createBox(root, def.w, def.h, def.d, def.x, 0, def.z, 0x5a6477, wallTex);
+    const wall = createBox(root, def.w, def.h, def.d, def.x, 0, def.z, 0xffffff, wallTex, {
+      roughness: 0.56,
+      metalness: 0.2,
+      bumpScale: 0.06,
+      clearcoat: 0.08,
+      clearcoatRoughness: 0.72,
+      envMapIntensity: 0.52,
+    });
     colliders.push(wall);
     wallMeshes.push(wall.mesh);
   }
@@ -164,9 +347,19 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
   for (let si = 0; si < level.structures.length; si++) {
     const structure = level.structures[si];
     const structTex = createStructureTexture(structure.color, si * 37);
-    structTex.repeat.set(
-      Math.max(1, Math.round(Math.max(structure.size.x, structure.size.z) / 3)),
-      Math.max(1, Math.round(structure.size.y / 2))
+    const repeatX = Math.max(1, Math.round(Math.max(structure.size.x, structure.size.z) / 3));
+    const repeatY = Math.max(1, Math.round(structure.size.y / 2));
+    structTex.map.repeat.set(
+      repeatX,
+      repeatY
+    );
+    structTex.bumpMap.repeat.set(
+      repeatX,
+      repeatY
+    );
+    structTex.roughnessMap.repeat.set(
+      repeatX,
+      repeatY
     );
     const collider = createBox(
       root,
@@ -176,18 +369,29 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
       structure.position.x,
       structure.position.y,
       structure.position.z,
-      structure.color,
-      structTex
+      0xffffff,
+      structTex,
+      {
+        roughness: 0.62,
+        metalness: structure.role === "platform" ? 0.32 : 0.18,
+        bumpScale: structure.role === "platform" ? 0.085 : 0.06,
+        clearcoat: structure.role === "platform" ? 0.14 : 0.05,
+        clearcoatRoughness: 0.6,
+        envMapIntensity: 0.48,
+      }
     );
     colliders.push(collider);
     wallMeshes.push(collider.mesh);
   }
 
-  const hemiLight = new THREE.HemisphereLight(0x6688cc, 0x282018, 0.6);
+  addPerimeterGlow(root, halfX, halfZ, wallHeight);
+  const updateDust = addDustField(root, level.floorSize);
+
+  const hemiLight = new THREE.HemisphereLight(0x89aaf8, 0x162033, 0.92);
   root.add(hemiLight);
 
-  const dirLight = new THREE.DirectionalLight(0xf4f8ff, 1.3);
-  dirLight.position.set(12, 18, 10);
+  const dirLight = new THREE.DirectionalLight(0xe6f1ff, 1.7);
+  dirLight.position.set(14, 18, 9);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.set(2048, 2048);
   dirLight.shadow.camera.left = -28;
@@ -196,59 +400,32 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
   dirLight.shadow.camera.bottom = -28;
   dirLight.shadow.camera.near = 1;
   dirLight.shadow.camera.far = 50;
-  dirLight.shadow.bias = -0.0002;
-  dirLight.shadow.normalBias = 0.04;
+  dirLight.shadow.bias = -0.00015;
+  dirLight.shadow.normalBias = 0.035;
   root.add(dirLight);
 
-  const accentLightA = new THREE.PointLight(0x2b72ff, 1.1, 28, 2);
-  accentLightA.position.set(-halfX * 0.55, 3.4, -halfZ * 0.4);
+  const accentLightA = new THREE.PointLight(0x2f7fff, 1.55, 32, 2);
+  accentLightA.position.set(-halfX * 0.58, 3.8, -halfZ * 0.42);
   root.add(accentLightA);
 
-  const accentLightB = new THREE.PointLight(0x3fd5ff, 0.9, 30, 2);
-  accentLightB.position.set(halfX * 0.6, 3.2, halfZ * 0.42);
+  const accentLightB = new THREE.PointLight(0x4ee1ff, 1.2, 34, 2);
+  accentLightB.position.set(halfX * 0.62, 3.6, halfZ * 0.4);
   root.add(accentLightB);
 
-  const fillLight = new THREE.DirectionalLight(0xffd4a8, 0.25);
-  fillLight.position.set(-8, 6, -10);
+  const fillLight = new THREE.DirectionalLight(0xffc995, 0.38);
+  fillLight.position.set(-8, 7, -10);
   root.add(fillLight);
 
-  scene.background = new THREE.Color(level.backgroundColor);
-  scene.fog = new THREE.Fog(level.backgroundColor, 24, level.fogFar);
+  resolveArenaLayout(level, colliders);
 
   const interactables = level.interactables.map((def) =>
     createInteractableVisual(root, def)
   );
   const holdZones = level.holdZones.map((def) => createHoldZoneVisual(root, def));
   const jumpPads = level.jumpPads.map((def) => createJumpPadVisual(root, def));
-  const occupiedPickupPoints: PickupOccupiedArea[] = [
-    ...level.interactables.map((entry) => ({
-      position: entry.position.clone(),
-      radius: 1.2,
-    })),
-    ...level.holdZones.map((entry) => ({
-      position: entry.position.clone(),
-      radius: entry.radius + 0.9,
-    })),
-    ...level.jumpPads.map((entry) => ({
-      position: entry.position.clone(),
-      radius: entry.radius + 0.8,
-    })),
-    {
-      position: level.extractionZone.position.clone(),
-      radius: level.extractionZone.radius + 1,
-    },
-  ];
-  const weaponPickups = level.weaponPickups.map((def) => {
-    const safePosition = resolveArenaPickupPosition(
-      def.position,
-      colliders,
-      level.floorSize,
-      occupiedPickupPoints,
-      DEFAULT_PICKUP_CLEARANCE
-    );
-    occupiedPickupPoints.push(safePosition.clone());
-    return createWeaponPickupVisual(root, { ...def, position: safePosition });
-  });
+  const weaponPickups = level.weaponPickups.map((def) =>
+    createWeaponPickupVisual(root, def)
+  );
   const extraction = createExtractionVisual(root, level.extractionZone);
 
   return {
@@ -263,6 +440,7 @@ export function buildArena(scene: THREE.Scene, level: LevelDefinition): Arena {
     jumpPads,
     weaponPickups,
     extraction,
+    updateDust,
   };
 }
 
@@ -554,7 +732,139 @@ export function resolveArenaPickupPosition(
     }
   }
 
-  return clampedOrigin;
+  let bestCandidate: THREE.Vector3 | null = null;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  const gridStep = 0.75;
+
+  for (let x = minX; x <= maxX; x += gridStep) {
+    for (let z = minZ; z <= maxZ; z += gridStep) {
+      const candidate = new THREE.Vector3(x, desiredPosition.y, z);
+      if (
+        !hasArenaClearance(candidate, colliders, clearance) ||
+        !hasOccupiedClearance(candidate, occupiedPoints, clearance)
+      ) {
+        continue;
+      }
+
+      const distance = candidate.distanceToSquared(clampedOrigin);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestCandidate = candidate;
+      }
+    }
+  }
+
+  return bestCandidate ?? clampedOrigin;
+}
+
+export function resolveArenaLayout(
+  level: LevelDefinition,
+  colliders: ArenaCollider[]
+): void {
+  const occupiedAreas: PickupOccupiedArea[] = [];
+
+  for (const entry of level.interactables) {
+    entry.position.copy(
+      resolveArenaPickupPosition(
+        entry.position,
+        colliders,
+        level.floorSize,
+        occupiedAreas,
+        INTERACTABLE_CLEARANCE
+      )
+    );
+    occupiedAreas.push({
+      position: entry.position.clone(),
+      radius: INTERACTABLE_OCCUPANCY_RADIUS,
+    });
+  }
+
+  for (const entry of level.holdZones) {
+    entry.position.copy(
+      resolveArenaPickupPosition(
+        entry.position,
+        colliders,
+        level.floorSize,
+        occupiedAreas,
+        entry.radius + HOLD_ZONE_MARGIN
+      )
+    );
+    occupiedAreas.push({
+      position: entry.position.clone(),
+      radius: entry.radius + HOLD_ZONE_MARGIN,
+    });
+  }
+
+  level.extractionZone.position.copy(
+    resolveArenaPickupPosition(
+      level.extractionZone.position,
+      colliders,
+      level.floorSize,
+      occupiedAreas,
+      level.extractionZone.radius + EXTRACTION_MARGIN
+    )
+  );
+  occupiedAreas.push({
+    position: level.extractionZone.position.clone(),
+    radius: level.extractionZone.radius + EXTRACTION_MARGIN,
+  });
+
+  for (const entry of level.jumpPads) {
+    entry.position.copy(
+      resolveArenaPickupPosition(
+        entry.position,
+        colliders,
+        level.floorSize,
+        occupiedAreas,
+        entry.radius + JUMP_PAD_MARGIN
+      )
+    );
+    occupiedAreas.push({
+      position: entry.position.clone(),
+      radius: entry.radius + JUMP_PAD_MARGIN,
+    });
+  }
+
+  for (const entry of level.weaponPickups) {
+    entry.position.copy(
+      resolveArenaPickupPosition(
+        entry.position,
+        colliders,
+        level.floorSize,
+        occupiedAreas,
+        DEFAULT_PICKUP_CLEARANCE
+      )
+    );
+    occupiedAreas.push({
+      position: entry.position.clone(),
+      radius: DEFAULT_PICKUP_CLEARANCE,
+    });
+  }
+
+  for (const entry of level.optionalObjectives) {
+    resolveOptionalObjectivePosition(entry, level, colliders, occupiedAreas);
+    occupiedAreas.push({
+      position: entry.position.clone(),
+      radius: entry.radius + OPTIONAL_OBJECTIVE_MARGIN,
+    });
+  }
+}
+
+function resolveOptionalObjectivePosition(
+  objective: OptionalObjectiveDefinition,
+  level: LevelDefinition,
+  colliders: ArenaCollider[],
+  occupiedAreas: PickupOccupiedArea[]
+): void {
+  objective.position.copy(
+    resolveArenaPickupPosition(
+      objective.position,
+      colliders,
+      level.floorSize,
+      occupiedAreas,
+      objective.radius + OPTIONAL_OBJECTIVE_MARGIN
+    )
+  );
 }
 
 function createExtractionVisual(

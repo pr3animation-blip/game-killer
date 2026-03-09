@@ -7,7 +7,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import { MenuBackground } from "@/components/menu/menu-background";
+import { DeferredMenuBackground } from "@/components/menu/deferred-menu-background";
 import { useGameStore } from "@/state/game-store";
 
 interface MainMenuProps {
@@ -15,9 +15,16 @@ interface MainMenuProps {
   onSettings: () => void;
   onExit: () => void;
   onLeaderboard: () => void;
+  onIntentToPlay?: () => void;
 }
 
-export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenuProps) {
+export function MainMenu({
+  onPlay,
+  onSettings,
+  onExit,
+  onLeaderboard,
+  onIntentToPlay,
+}: MainMenuProps) {
   const [time, setTime] = useState("");
   const loadLeaderboard = useGameStore((s) => s.loadLeaderboard);
 
@@ -44,10 +51,8 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
 
   return (
     <div className="menu-cinematic-shell absolute inset-0 z-30 overflow-hidden">
-      <MenuBackground />
+      <DeferredMenuBackground />
 
-      {/* Scanline overlay */}
-      <div className="cyber-scanlines" />
 
       {/* ── CONTENT LAYER ── */}
       <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8 lg:p-10">
@@ -56,10 +61,9 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
         <header className="flex items-start justify-between">
           {/* Logo mark — top left */}
           <div
-            className="cyber-slide-in flex items-center gap-3"
+            className="tac-fade-in flex items-center gap-3"
             style={{ animationDelay: "100ms" }}
           >
-            <div className="cyber-dot" />
             <span
               className="font-mono text-[10px] uppercase tracking-[0.5em] text-primary/60"
             >
@@ -69,13 +73,13 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
 
           {/* Status — top right */}
           <div
-            className="cyber-slide-in-right flex items-center gap-4"
+            className="tac-fade-in flex items-center gap-4"
             style={{ animationDelay: "150ms" }}
           >
             <span className="font-mono text-[10px] tabular-nums tracking-[0.3em] text-primary/40">
               {time}
             </span>
-            <span className="hud-chip">v0.1.0</span>
+            <span className="tac-chip">v0.1.0</span>
           </div>
         </header>
 
@@ -89,7 +93,7 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
             <button
               id="menu-settings-button"
               onClick={onSettings}
-              className="cyber-btn cyber-slide-in flex h-10 items-center gap-3 px-5"
+              className="tac-btn tac-fade-in flex h-10 items-center gap-3 px-5"
               style={{ animationDelay: "300ms" }}
               aria-label="Open settings"
             >
@@ -102,7 +106,7 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
             <button
               id="menu-leaderboard-button"
               onClick={onLeaderboard}
-              className="cyber-btn cyber-slide-in flex h-10 items-center gap-3 px-5"
+              className="tac-btn tac-fade-in flex h-10 items-center gap-3 px-5"
               style={{ animationDelay: "350ms" }}
               aria-label="View leaderboard"
             >
@@ -115,7 +119,7 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
             <button
               id="menu-exit-button"
               onClick={onExit}
-              className="cyber-btn cyber-slide-in flex h-10 items-center gap-3 px-5"
+              className="tac-btn tac-fade-in flex h-10 items-center gap-3 px-5"
               style={{ animationDelay: "450ms" }}
               aria-label="Exit game"
             >
@@ -130,7 +134,10 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
           <button
             id="menu-play-button"
             onClick={onPlay}
-            className="cyber-btn cyber-btn-primary hud-reveal group relative flex h-14 items-center gap-4 px-10"
+            onPointerEnter={onIntentToPlay}
+            onPointerDown={onIntentToPlay}
+            onFocus={onIntentToPlay}
+            className="tac-btn tac-btn-primary hud-reveal group relative flex h-14 items-center gap-4 px-10"
             style={{ animationDelay: "200ms" }}
           >
             <Zap className="h-4 w-4" />
@@ -142,12 +149,12 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
             </span>
 
             {/* Animated bottom neon line */}
-            <span className="absolute -bottom-px left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[oklch(0.82_0.16_192)] to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+            <span className="absolute -bottom-px left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[#e06030] to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
           </button>
 
           {/* Right — decorative data readout */}
           <div
-            className="cyber-slide-in-right flex flex-col items-end gap-1"
+            className="tac-fade-in flex flex-col items-end gap-1"
             style={{ animationDelay: "350ms" }}
           >
             <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-primary/30">
@@ -164,8 +171,8 @@ export function MainMenu({ onPlay, onSettings, onExit, onLeaderboard }: MainMenu
                   style={{
                     background:
                       i < 4
-                        ? "oklch(0.82 0.16 192 / 50%)"
-                        : "oklch(0.82 0.16 192 / 15%)",
+                        ? "rgba(224, 96, 48, 0.5)"
+                        : "rgba(224, 96, 48, 0.15)",
                   }}
                 />
               ))}

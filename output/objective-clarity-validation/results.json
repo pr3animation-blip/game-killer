@@ -1,0 +1,80 @@
+[
+  {
+    "level": "relay-loop",
+    "objective": {
+      "phase": "objective",
+      "text": "Sync Terminal A",
+      "detail": "Boot the west relay and expose the next lane. Terminal 1 of 3.",
+      "progress": "0/3"
+    },
+    "boss": {
+      "phase": "boss",
+      "text": "Defeat Relay Warden",
+      "detail": "Relay Warden online. Beam grid armed.",
+      "progress": "560/560",
+      "bossActive": true,
+      "bots": 0
+    },
+    "extract": {
+      "phase": "extract",
+      "text": "Reach Extract",
+      "detail": "Hold inside the beacon to upload the relay chain and leave.",
+      "progress": "0.0/1.2",
+      "extractionUnlocked": true,
+      "escapeTimer": null,
+      "gameState": "levelUpChoice"
+    }
+  },
+  {
+    "level": "uplink-split",
+    "objective": {
+      "phase": "objective",
+      "text": "Secure Uplink A",
+      "detail": "Stabilize the west uplink to reopen the center lane. Stay inside the ring until the uplink stabilizes. Zone 1 of 2.",
+      "progress": "0.0/5.0"
+    },
+    "boss": {
+      "phase": "boss",
+      "text": "Defeat Uplink Overseer",
+      "detail": "Uplink Overseer deployed. Siege battery live.",
+      "progress": "660/660",
+      "bossActive": true,
+      "bots": 0
+    },
+    "extract": {
+      "phase": "extract",
+      "text": "Reach Central Extract",
+      "detail": "Collapse back to mid and hold for pickup.",
+      "progress": "0.0/1.2",
+      "extractionUnlocked": true,
+      "escapeTimer": null,
+      "gameState": "levelUpChoice"
+    }
+  },
+  {
+    "level": "blackout-run",
+    "objective": {
+      "phase": "objective",
+      "text": "Trigger Reactor Switch",
+      "detail": "Trip the reactor. The evac clock starts immediately.",
+      "progress": "0/1"
+    },
+    "boss": {
+      "phase": "boss",
+      "text": "Defeat Blackout Hunter",
+      "detail": "Blackout Hunter inbound. Rail line charging.",
+      "progress": "760/760",
+      "bossActive": true,
+      "bots": 0
+    },
+    "extract": {
+      "phase": "extract",
+      "text": "Extract at Evac",
+      "detail": "Sprint back to evac and hold before the collapse catches you.",
+      "progress": "0.0/1.2",
+      "extractionUnlocked": true,
+      "escapeTimer": 28,
+      "gameState": "levelUpChoice"
+    }
+  }
+]

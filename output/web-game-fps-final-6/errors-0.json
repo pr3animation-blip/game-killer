@@ -1,0 +1,14 @@
+[
+  {
+    "type": "console.error",
+    "text": "WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=IChEkZSnFIqOsJ0LYFRVS' failed: "
+  },
+  {
+    "type": "console.error",
+    "text": "WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=IChEkZSnFIqOsJ0LYFRVS' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+  },
+  {
+    "type": "console.error",
+    "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+  }
+]

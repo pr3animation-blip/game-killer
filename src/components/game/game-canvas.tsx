@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { GameEngine } from "@/game/engine";
+import { getClassPresetById, type ClassPresetId } from "@/game/classes";
 import { useGameStore } from "@/state/game-store";
 
 interface GameCanvasProps {
   canvasRef: RefObject<HTMLCanvasElement | null>;
-  onEngineReady: (engine: GameEngine) => void;
+  onEngineReady: (engine: GameEngineHandle | null) => void;
   active: boolean;
+  classPresetId?: ClassPresetId | null;
 }
+
+export type GameEngineHandle = Pick<
+  GameEngine,
+  "dispose" | "resume" | "updateSettings" | "restartRun"
+>;
 
 declare global {
   interface Window {
@@ -18,18 +25,30 @@ declare global {
   }
 }
 
-export function GameCanvas({ canvasRef, onEngineReady, active }: GameCanvasProps) {
+export function GameCanvas({
+  canvasRef,
+  onEngineReady,
+  active,
+  classPresetId,
+}: GameCanvasProps) {
   const engineRef = useRef<GameEngine | null>(null);
+  const classPreset = useMemo(() => getClassPresetById(classPresetId), [classPresetId]);
 
   useEffect(() => {
     if (!active || !canvasRef.current || engineRef.current) return;
 
-    const engine = new GameEngine(canvasRef.current);
+    const engine = new GameEngine(canvasRef.current, undefined, classPreset);
     engineRef.current = engine;
+    useGameStore.setState({ activeClassName: classPreset?.name ?? null });
 
     // Bridge engine events to Zustand store
     engine.on("healthChanged", (health) => {
+      const prev = useGameStore.getState().health;
       useGameStore.setState({ health });
+      if (health < prev) {
+        const damage = prev - health;
+        useGameStore.getState().flashDamageVignette(Math.min(1, damage / 50));
+      }
     });
     engine.on("ammoChanged", (current, reserve) => {
       useGameStore.setState({ ammo: current, reserveAmmo: reserve });
@@ -62,8 +81,8 @@ export function GameCanvas({ canvasRef, onEngineReady, active }: GameCanvasProps
     engine.on("fpsUpdate", (fps) => {
       useGameStore.setState({ fps });
     });
-    engine.on("hit", () => {
-      useGameStore.getState().flashHitMarker();
+    engine.on("hit", (_point: unknown, _damage: unknown, isHeadshot: boolean) => {
+      useGameStore.getState().flashHitMarker(isHeadshot);
     });
     engine.on("reloading", (isReloading) => {
       useGameStore.setState({ isReloading });
@@ -73,6 +92,9 @@ export function GameCanvas({ canvasRef, onEngineReady, active }: GameCanvasProps
     });
     engine.on("radarChanged", (radar) => {
       useGameStore.setState({ radar });
+    });
+    engine.on("bossChanged", (boss) => {
+      useGameStore.setState({ boss });
     });
     engine.on("movementChanged", ({ state, dashCooldown }) => {
       useGameStore.setState({ movementState: state, dashCooldown });
@@ -138,13 +160,14 @@ export function GameCanvas({ canvasRef, onEngineReady, active }: GameCanvasProps
     return () => {
       engine.dispose();
       engineRef.current = null;
+      onEngineReady(null);
       if (window.__gameEngine === engine) {
         delete window.__gameEngine;
         delete window.render_game_to_text;
         delete window.advanceTime;
       }
     };
-  }, [active, canvasRef, onEngineReady]);
+  }, [active, canvasRef, classPreset, onEngineReady]);
 
   return null;
 }

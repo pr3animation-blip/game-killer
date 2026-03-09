@@ -5,9 +5,10 @@ import { Skull } from "lucide-react";
 
 interface GameOverScreenProps {
   onReturnToMenu: () => void;
+  onRetry?: () => void;
 }
 
-export function GameOverScreen({ onReturnToMenu }: GameOverScreenProps) {
+export function GameOverScreen({ onReturnToMenu, onRetry }: GameOverScreenProps) {
   const stats = useGameStore((s) => s.gameOverStats);
   const leaderboard = useGameStore((s) => s.leaderboard);
 
@@ -28,7 +29,7 @@ export function GameOverScreen({ onReturnToMenu }: GameOverScreenProps) {
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center">
       {/* Dim backdrop */}
-      <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/85" />
 
       <div className="relative z-10 flex flex-col items-center gap-6 px-6">
         {/* Death icon */}
@@ -65,9 +66,19 @@ export function GameOverScreen({ onReturnToMenu }: GameOverScreenProps) {
 
         {/* Actions */}
         <div className="mt-6 flex gap-4">
+          {onRetry ? (
+            <button
+              onClick={onRetry}
+              className="tac-btn tac-btn-primary flex h-12 items-center gap-3 px-8"
+            >
+              <span className="font-mono text-xs uppercase tracking-[0.3em]">
+                Retry
+              </span>
+            </button>
+          ) : null}
           <button
             onClick={onReturnToMenu}
-            className="cyber-btn cyber-btn-primary flex h-12 items-center gap-3 px-8"
+            className={`tac-btn flex h-12 items-center gap-3 px-8 ${onRetry ? "" : "tac-btn-primary"}`}
           >
             <span className="font-mono text-xs uppercase tracking-[0.3em]">
               Return to Menu

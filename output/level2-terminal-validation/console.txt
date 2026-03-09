@@ -1,0 +1,8 @@
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[warning] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures
+[warning] WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 32ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 59ms

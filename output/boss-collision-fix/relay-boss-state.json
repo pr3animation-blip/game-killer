@@ -1,0 +1,14 @@
+{
+  "bossPosition": {
+    "x": 4.8,
+    "y": 0.1,
+    "z": 0
+  },
+  "centerBounds": {
+    "minX": -3.5,
+    "maxX": 3.5,
+    "minZ": -3.5,
+    "maxZ": 3.5
+  },
+  "overlapsCenter": false
+}

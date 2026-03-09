@@ -11,6 +11,8 @@ export interface ClassPreset {
   upgradeStacks: number;
 }
 
+export type ClassPresetId = ClassPreset["id"];
+
 export const CLASS_PRESETS: ClassPreset[] = [
   {
     id: "recruit",
@@ -62,6 +64,8 @@ export const CLASS_PRESETS: ClassPreset[] = [
   },
 ];
 
+const CLASS_PRESET_BY_ID = new Map(CLASS_PRESETS.map((preset) => [preset.id, preset]));
+
 export function getClassWeaponName(preset: ClassPreset): string {
   return WEAPON_DEFINITIONS[preset.weaponId].name;
 }
@@ -69,4 +73,9 @@ export function getClassWeaponName(preset: ClassPreset): string {
 export function getClassUpgradeName(preset: ClassPreset): string | null {
   if (preset.upgradeId === null) return null;
   return UPGRADE_DEFINITIONS[preset.upgradeId].name;
+}
+
+export function getClassPresetById(id: ClassPresetId | null | undefined): ClassPreset | null {
+  if (!id) return null;
+  return CLASS_PRESET_BY_ID.get(id) ?? null;
 }

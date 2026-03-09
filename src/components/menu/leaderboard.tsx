@@ -22,7 +22,7 @@ export function Leaderboard({ onBack }: LeaderboardProps) {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/80">
       <div className="w-full max-w-xl px-6">
         <h2 className="mb-6 text-center font-mono text-lg uppercase tracking-[0.4em] text-primary/80">
           Top Runs
@@ -61,7 +61,7 @@ export function Leaderboard({ onBack }: LeaderboardProps) {
         <div className="mt-8 flex justify-center">
           <button
             onClick={onBack}
-            className="cyber-btn flex h-10 items-center gap-3 px-6"
+            className="tac-btn flex h-10 items-center gap-3 px-6"
           >
             <span className="font-mono text-[11px] uppercase tracking-[0.3em]">
               Back

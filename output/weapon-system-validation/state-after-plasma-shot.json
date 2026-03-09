@@ -1,0 +1,308 @@
+{
+  "coordinateSystem": "x:right y:up z:forward-negative",
+  "state": "playing",
+  "level": {
+    "id": "uplink-split",
+    "name": "Uplink Split",
+    "index": 2,
+    "total": 3,
+    "levelTime": 2.3,
+    "runTime": 3.3
+  },
+  "player": {
+    "alive": true,
+    "health": 92,
+    "position": {
+      "x": 0.73,
+      "y": 0,
+      "z": 4.26
+    },
+    "eye": {
+      "x": 0.73,
+      "y": 1.53,
+      "z": 4.26
+    },
+    "forward": {
+      "x": 0,
+      "y": 0,
+      "z": -1
+    },
+    "movementState": "walk",
+    "dashCooldown": 0,
+    "speed": 7
+  },
+  "inventory": {
+    "slots": [
+      {
+        "index": 0,
+        "weaponId": "plasma-lobber",
+        "name": "Plasma Lobber",
+        "shortName": "Plasma",
+        "ammo": 4,
+        "reserveAmmo": 18
+      },
+      {
+        "index": 1,
+        "weaponId": "arc-smg",
+        "name": "Arc SMG",
+        "shortName": "Arc SMG",
+        "ammo": 36,
+        "reserveAmmo": 136
+      }
+    ],
+    "activeSlot": 0,
+    "activeWeaponId": "plasma-lobber",
+    "activeWeaponName": "Plasma Lobber",
+    "fireMode": "projectile",
+    "ammo": 4,
+    "reserveAmmo": 18,
+    "isReloading": false,
+    "chargeRatio": 0,
+    "reticleSpread": 0.574
+  },
+  "activeWeapon": {
+    "weaponId": "plasma-lobber",
+    "name": "Plasma Lobber",
+    "ammo": 4,
+    "reserveAmmo": 18,
+    "fireMode": "projectile",
+    "chargeRatio": 0,
+    "reloading": false
+  },
+  "pickupPrompt": {
+    "active": false,
+    "pickupId": null,
+    "weaponId": null,
+    "label": "",
+    "action": "pickup",
+    "text": "",
+    "progress": 0
+  },
+  "objective": {
+    "kind": "hold-zone",
+    "title": "Uplink Split",
+    "text": "Hold Uplink A",
+    "detail": "Stabilize the west uplink to reopen the center lane.",
+    "progress": "0.0/5.0s secure",
+    "interactPrompt": null,
+    "activeInteractableId": null,
+    "activeHoldZoneId": "uplink-a",
+    "escapeTimer": null
+  },
+  "interactables": [],
+  "holdZones": [
+    {
+      "id": "uplink-a",
+      "label": "Uplink A",
+      "hint": "Stabilize the west uplink to reopen the center lane.",
+      "active": true,
+      "progress": 0,
+      "required": 5,
+      "position": {
+        "x": -14,
+        "y": 0.1,
+        "z": 11
+      }
+    },
+    {
+      "id": "uplink-b",
+      "label": "Uplink B",
+      "hint": "Mirror the network link on the east wing.",
+      "active": false,
+      "progress": 0,
+      "required": 5,
+      "position": {
+        "x": 14,
+        "y": 0.1,
+        "z": -11
+      }
+    }
+  ],
+  "extraction": {
+    "unlocked": false,
+    "hint": "Collapse back to mid and hold for pickup.",
+    "progress": 0,
+    "position": {
+      "x": 0,
+      "y": 0.1,
+      "z": 0
+    }
+  },
+  "jumpPads": [
+    {
+      "id": "uplink-pad-left",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": -9,
+        "y": 0.1,
+        "z": 7
+      }
+    },
+    {
+      "id": "uplink-pad-right",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": 9,
+        "y": 0.1,
+        "z": -7
+      }
+    }
+  ],
+  "weaponPickups": [
+    {
+      "id": "uplink-helix",
+      "label": "Helix Burst Rifle",
+      "weaponId": "helix-burst-rifle",
+      "claimed": true,
+      "position": {
+        "x": 0.73,
+        "y": 2.9,
+        "z": 4.26
+      }
+    },
+    {
+      "id": "uplink-rail",
+      "label": "Rail Lance",
+      "weaponId": "rail-lance",
+      "claimed": false,
+      "position": {
+        "x": 17.97,
+        "y": 0.1,
+        "z": -6.87
+      }
+    },
+    {
+      "id": "uplink-arc-refill",
+      "label": "Arc SMG Refill",
+      "weaponId": "arc-smg",
+      "claimed": false,
+      "position": {
+        "x": -14,
+        "y": 0.1,
+        "z": 11
+      }
+    }
+  ],
+  "projectiles": [
+    {
+      "id": "projectile-0",
+      "weaponId": "plasma-lobber",
+      "position": {
+        "x": 1.13,
+        "y": 1.42,
+        "z": 2.08
+      },
+      "velocity": {
+        "x": 0,
+        "y": 5.39,
+        "z": -23.28
+      },
+      "radius": 0.18,
+      "age": 0.03,
+      "maxAge": 3.8
+    }
+  ],
+  "awareness": {
+    "active": true,
+    "direction": "front",
+    "count": 3,
+    "distance": 4.3
+  },
+  "radar": {
+    "range": 22,
+    "contacts": [
+      {
+        "id": "uplink-bot-3",
+        "x": -0.078,
+        "y": 0.177,
+        "distance": 4.3,
+        "clamped": false,
+        "watching": true
+      },
+      {
+        "id": "uplink-bot-2",
+        "x": 0.403,
+        "y": -0.151,
+        "distance": 9.5,
+        "clamped": false,
+        "watching": true
+      },
+      {
+        "id": "uplink-bot-1",
+        "x": -0.447,
+        "y": 0.369,
+        "distance": 12.8,
+        "clamped": false,
+        "watching": true
+      }
+    ]
+  },
+  "bots": [
+    {
+      "id": "uplink-bot-1",
+      "name": "Botuplink-bot-1",
+      "state": "chase",
+      "health": 100,
+      "position": {
+        "x": -9.1,
+        "y": 0,
+        "z": -3.87
+      },
+      "lookDirection": {
+        "x": 0.77,
+        "y": 0.08,
+        "z": 0.64
+      },
+      "muzzle": {
+        "x": -8.2,
+        "y": 1.12,
+        "z": -3.05
+      }
+    },
+    {
+      "id": "uplink-bot-2",
+      "name": "Botuplink-bot-2",
+      "state": "attack",
+      "health": 100,
+      "position": {
+        "x": 9.59,
+        "y": 0,
+        "z": 7.59
+      },
+      "lookDirection": {
+        "x": -0.93,
+        "y": 0.08,
+        "z": -0.35
+      },
+      "muzzle": {
+        "x": 8.47,
+        "y": 1.12,
+        "z": 7.1
+      }
+    },
+    {
+      "id": "uplink-bot-3",
+      "name": "Botuplink-bot-3",
+      "state": "attack",
+      "health": 100,
+      "position": {
+        "x": -0.99,
+        "y": 2.9,
+        "z": 0.37
+      },
+      "lookDirection": {
+        "x": 0.36,
+        "y": -0.44,
+        "z": 0.82
+      },
+      "muzzle": {
+        "x": -0.59,
+        "y": 3.4,
+        "z": 1.43
+      }
+    }
+  ],
+  "score": 0,
+  "deaths": 0,
+  "levelComplete": null
+}

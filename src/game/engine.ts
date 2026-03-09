@@ -5,12 +5,14 @@ import {
   ArenaInteractableVisual,
   ArenaWeaponPickupVisual,
   buildArena,
+  createBossLockdownSegment,
 } from "./arena";
 import { AudioManager } from "./audio";
+import { BossActor, createBossActor } from "./bosses";
 import { ClassPreset } from "./classes";
 import { Bot } from "./bot";
 import { InputManager } from "./input";
-import { LEVEL_DEFINITIONS, LEVEL_ORDER } from "./levels";
+import { cloneLevelDefinition, LEVEL_DEFINITIONS, LEVEL_ORDER } from "./levels";
 import { Player } from "./player";
 import {
   applyUpgrade,
@@ -30,8 +32,11 @@ import {
 } from "./weapon";
 import {
   AppliedUpgrade,
+  ArenaCollider,
   BalanceSnapshot,
   BankedScoreState,
+  BossCheckpointState,
+  BossState,
   CheckpointState,
   ComboState,
   DEFAULT_SETTINGS,
@@ -115,6 +120,7 @@ const createEmptyLevelSummary = (): LevelSummary => ({
 
 const createEmptyObjectiveState = (): ObjectiveState => ({
   kind: "terminal-sequence",
+  phase: "objective",
   title: "",
   text: "",
   detail: "",
@@ -133,6 +139,27 @@ const createInactivePickupPrompt = (): PickupPromptState => ({
   action: "pickup",
   text: "",
   progress: 0,
+});
+
+const createInactiveBossState = (): BossState => ({
+  active: false,
+  introActive: false,
+  defeated: false,
+  id: null,
+  name: "",
+  weaponType: null,
+  health: 0,
+  maxHealth: 0,
+  phase: 1,
+  telegraph: null,
+  introText: null,
+});
+
+const createInactiveBossCheckpoint = (): BossCheckpointState => ({
+  active: false,
+  spawn: null,
+  loadoutSnapshot: null,
+  weaponPickupClaims: [],
 });
 
 const createEmptyComboState = (): ComboState => ({
@@ -225,6 +252,7 @@ export type EngineEventCallback = {
   reloading: (isReloading: boolean) => void;
   threatChanged: (threat: ThreatAlert) => void;
   radarChanged: (radar: RadarState) => void;
+  bossChanged: (boss: BossState) => void;
   movementChanged: (payload: {
     state: MovementState;
     dashCooldown: number;
@@ -260,6 +288,7 @@ export class GameEngine {
   private player: Player;
   private weapon: WeaponSystem;
   private bots: Bot[] = [];
+  private currentBoss: BossActor | null = null;
   private arena!: Arena;
   private audio: AudioManager;
   private scene: THREE.Scene;
@@ -275,6 +304,7 @@ export class GameEngine {
   private gameState: GameState = "playing";
   private threatAlert: ThreatAlert = createInactiveThreatAlert();
   private radarState: RadarState = createInactiveRadarState();
+  private bossState: BossState = createInactiveBossState();
   private objectiveState: ObjectiveState = createEmptyObjectiveState();
   private levelSummary: LevelSummary = createEmptyLevelSummary();
   private levelCompleteSummary: LevelCompleteSummary | null = null;
@@ -283,10 +313,15 @@ export class GameEngine {
   private currentLevelIndex = 0;
   private currentLevel!: LevelDefinition;
   private levelRuntime!: LevelRuntimeState;
+  private dyingTimer = 0;
+  private dyingKillerName = "";
   private levelTransitionTimer = 0;
   private levelScoreBaseline = 0;
   private readonly jumpPadCooldowns = new Map<string, number>();
+  private readonly expiredOptionalObjectives = new Set<string>();
   private weaponPickups: WeaponPickupRuntime[] = [];
+  private bossCheckpoint: BossCheckpointState = createInactiveBossCheckpoint();
+  private bossLockdowns: ArenaCollider[] = [];
   private readonly claimedWeaponPickups = new Set<string>();
   private comboState: ComboState = createEmptyComboState();
   private bankState: BankedScoreState = createEmptyBankState();
@@ -314,13 +349,14 @@ export class GameEngine {
 
   private listeners: Partial<EngineEventCallback> = {};
 
-  constructor(canvas: HTMLCanvasElement, settings?: Partial<GameSettings>) {
+  constructor(canvas: HTMLCanvasElement, settings?: Partial<GameSettings>, classPreset?: ClassPreset | null) {
     const s = { ...DEFAULT_SETTINGS, ...settings };
     this.scene = new THREE.Scene();
     this.renderer = new GameRenderer(canvas);
     this.input = new InputManager(canvas);
+    this.classPreset = classPreset ?? null;
 
-    this.currentLevel = LEVEL_DEFINITIONS[LEVEL_ORDER[0]];
+    this.currentLevel = cloneLevelDefinition(LEVEL_DEFINITIONS[LEVEL_ORDER[0]]);
     this.arena = buildArena(this.scene, this.currentLevel);
 
     const spawn = this.currentLevel.spawnPoints[0];
@@ -441,8 +477,11 @@ export class GameEngine {
 
   continueAfterLevelComplete(): void {
     if (this.gameState !== "levelComplete") return;
-    this.advanceToNextLevel();
+    this.gameState = "levelTransition";
+    this.levelTransitionTimer = 1.5;
+    this.emit("gameStateChanged", "levelTransition");
     this.input.requestPointerLock();
+    this.pushState();
   }
 
   restartRun(): void {
@@ -467,8 +506,10 @@ export class GameEngine {
   }
 
   renderGameToText(): string {
-    const activeInteractable = this.getActiveInteractable();
-    const activeHoldZone = this.getActiveHoldZone();
+    const activeInteractable =
+      this.levelRuntime.phase === "boss" ? null : this.getActiveInteractable();
+    const activeHoldZone =
+      this.levelRuntime.phase === "boss" ? null : this.getActiveHoldZone();
     const inventory = this.weapon.getInventoryState();
     const projectiles = this.weapon.getProjectilesState();
     const recoilState = this.player.camera.getShotRecoilState();
@@ -520,6 +561,7 @@ export class GameEngine {
       },
       objective: {
         kind: this.currentLevel.objectiveKind,
+        phase: this.objectiveState.phase,
         title: this.objectiveState.title,
         text: this.objectiveState.text,
         detail: this.objectiveState.detail,
@@ -585,6 +627,7 @@ export class GameEngine {
       runtimeModifiers: this.runtimeModifiers,
       balance: this.balanceSnapshot,
       medalPace: this.medalPace,
+      boss: this.bossState.active || this.bossState.defeated ? this.bossState : null,
       opportunity: this.activeOpportunity,
       recoveryShard: this.recoveryShard.active
         ? {
@@ -651,6 +694,25 @@ export class GameEngine {
       return;
     }
 
+    if (this.gameState === "dying") {
+      this.dyingTimer -= dt;
+      this.player.camera.applyDeathTilt(dt);
+      if (this.dyingTimer <= 0) {
+        this.finalizeDeath();
+      }
+      this.pushState();
+      return;
+    }
+
+    if (this.gameState === "levelTransition") {
+      this.levelTransitionTimer -= dt;
+      if (this.levelTransitionTimer <= 0) {
+        this.advanceToNextLevel();
+      }
+      this.pushState();
+      return;
+    }
+
     if (this.gameState === "levelComplete") {
       this.pushState();
       return;
@@ -671,7 +733,9 @@ export class GameEngine {
     this.runTime += dt;
     this.levelRuntime.levelTimer += dt;
     this.killChainTimer = Math.max(0, this.killChainTimer - dt);
-    this.updateEncounterPressure(dt);
+    if (this.levelRuntime.phase !== "boss") {
+      this.updateEncounterPressure(dt);
+    }
 
     if (this.levelRuntime.escapeTimer !== null) {
       this.levelRuntime.escapeTimer = Math.max(0, this.levelRuntime.escapeTimer - dt);
@@ -692,17 +756,24 @@ export class GameEngine {
     this.handleReload(input);
     this.updateObjectives(dt, input.interact);
     this.handleWeaponPickups(dt, input.interact, !this.objectiveState.interactPrompt);
-    this.updateOptionalObjectives(dt, input.interact);
+    if (this.levelRuntime.phase !== "boss") {
+      this.updateOptionalObjectives(dt, input.interact);
+    }
     this.handleJumpPads();
     this.handlePlayerFire(input);
     this.updateBotBias();
-    this.updateBots(dt);
+    if (this.levelRuntime.phase === "boss") {
+      this.updateBoss(dt);
+    } else {
+      this.updateBots(dt);
+    }
     this.updateProjectileCombat(dt);
     this.updateAwareness(this.player.body.getEyePosition());
     this.updateRecoveryShardPickup();
     this.updateOpportunityState();
     this.updateMedalPace();
     this.syncArenaVisuals();
+    this.arena.updateDust(this.runTime);
 
     this.statePushTimer += dt * 1000;
     if (this.statePushTimer >= STATE_PUSH_INTERVAL) {
@@ -750,12 +821,14 @@ export class GameEngine {
     this.player.camera.applyShotImpulse(dispatch.cameraKick);
 
     const damageEvents = new Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>();
+    let bossDamageEvent: { damage: number; point: THREE.Vector3; isHeadshot: boolean } | null = null;
     const botMeshes = this.bots
       .filter((bot) => bot.isAlive())
       .flatMap((bot) => bot.getKillMeshes());
+    const bossMeshes = this.currentBoss?.getHitMeshes() ?? [];
 
     for (const command of dispatch.commands) {
-      const result = this.resolveRayCommand(command, botMeshes);
+      const result = this.resolveRayCommand(command, [...botMeshes, ...bossMeshes]);
       this.weapon.spawnTrace(
         command.weaponId,
         command.visualOrigin,
@@ -764,6 +837,20 @@ export class GameEngine {
         command.tracerColor
       );
       for (const hit of result.hits) {
+        if (hit.targetType === "boss") {
+          if (bossDamageEvent) {
+            bossDamageEvent.damage += hit.damage;
+            bossDamageEvent.isHeadshot ||= hit.isHeadshot;
+          } else {
+            bossDamageEvent = {
+              damage: hit.damage,
+              point: hit.point.clone(),
+              isHeadshot: hit.isHeadshot,
+            };
+          }
+          continue;
+        }
+
         const current = damageEvents.get(hit.entity.id);
         if (current) {
           current.damage += hit.damage;
@@ -777,8 +864,8 @@ export class GameEngine {
     this.weapon.finalizeDispatch(dispatch);
     this.audio.playShoot();
 
-    if (damageEvents.size > 0) {
-      this.applyDamageEvents(damageEvents, dispatch.weaponName ?? "Weapon");
+    if (damageEvents.size > 0 || bossDamageEvent) {
+      this.applyDamageEvents(damageEvents, bossDamageEvent, dispatch.weaponName ?? "Weapon");
     }
   }
 
@@ -832,9 +919,12 @@ export class GameEngine {
 
   private resolveRayCommand(
     command: WeaponRayCommand,
-    botMeshes: THREE.Object3D[]
+    combatMeshes: THREE.Object3D[]
   ): {
-    hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }>;
+    hits: Array<
+      | { targetType: "bot"; entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }
+      | { targetType: "boss"; point: THREE.Vector3; damage: number; isHeadshot: boolean }
+    >;
     traceEnd: THREE.Vector3;
   } {
     const raycaster = new THREE.Raycaster(
@@ -848,20 +938,37 @@ export class GameEngine {
       .addScaledVector(command.direction, command.range);
     const worldHit = raycaster.intersectObjects(this.arena.wallMeshes, false)[0] ?? null;
     const worldDistance = worldHit?.distance ?? command.range;
-    const hits: Array<{ entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }> = [];
+    const hits: Array<
+      | { targetType: "bot"; entity: Bot["data"]; point: THREE.Vector3; damage: number; isHeadshot: boolean }
+      | { targetType: "boss"; point: THREE.Vector3; damage: number; isHeadshot: boolean }
+    > = [];
     const seen = new Set<string>();
 
-    for (const hit of raycaster.intersectObjects(botMeshes, false)) {
-      const entity = (hit.object.userData as Bot["data"]) ?? null;
-      if (!entity || seen.has(entity.id) || hit.distance > worldDistance) continue;
-      seen.add(entity.id);
-      const { multiplier, isHeadshot } = this.getBodyPartMultiplier(hit.point.y, entity.position.y);
-      hits.push({
-        entity,
-        point: hit.point.clone(),
-        damage: command.damage * multiplier,
-        isHeadshot,
-      });
+    for (const hit of raycaster.intersectObjects(combatMeshes, false)) {
+      if (hit.distance > worldDistance) continue;
+      if (hit.object.userData?.__boss) {
+        if (seen.has("__boss")) continue;
+        seen.add("__boss");
+        const bossMultiplier = hit.object.userData?.hitZone === "head" ? 1.4 : 1;
+        hits.push({
+          targetType: "boss",
+          point: hit.point.clone(),
+          damage: command.damage * bossMultiplier,
+          isHeadshot: hit.object.userData?.hitZone === "head",
+        });
+      } else {
+        const entity = (hit.object.userData as Bot["data"]) ?? null;
+        if (!entity || seen.has(entity.id)) continue;
+        seen.add(entity.id);
+        const { multiplier, isHeadshot } = this.getBodyPartMultiplier(hit.point.y, entity.position.y);
+        hits.push({
+          targetType: "bot",
+          entity,
+          point: hit.point.clone(),
+          damage: command.damage * multiplier,
+          isHeadshot,
+        });
+      }
       if (hits.length >= command.maxPierce) break;
     }
 
@@ -876,24 +983,37 @@ export class GameEngine {
   }
 
   private updateProjectileCombat(dt: number): void {
-    const botMeshes = this.bots
+    const combatMeshes = this.bots
       .filter((bot) => bot.isAlive())
-      .flatMap((bot) => bot.getKillMeshes());
-    const impacts = this.weapon.updateProjectiles(dt, botMeshes, this.arena.wallMeshes);
+      .flatMap((bot) => bot.getKillMeshes())
+      .concat(this.currentBoss?.getHitMeshes() ?? []);
+    const impacts = this.weapon.updateProjectiles(dt, combatMeshes, this.arena.wallMeshes);
 
     for (const impact of impacts) {
       const damageEvents = new Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>();
+      let bossDamageEvent: { damage: number; point: THREE.Vector3; isHeadshot: boolean } | null = null;
 
-      if (impact.directEntity) {
+      const directBossHit = Boolean(impact.directHitObject?.userData?.__boss);
+      const directBot = impact.directHitObject && !directBossHit
+        ? ((impact.directHitObject.userData as Bot["data"]) ?? null)
+        : null;
+
+      if (directBot) {
         const { multiplier, isHeadshot } = this.getBodyPartMultiplier(
           impact.position.y,
-          impact.directEntity.position.y
+          directBot.position.y
         );
-        damageEvents.set(impact.directEntity.id, {
+        damageEvents.set(directBot.id, {
           damage: impact.directDamage * multiplier,
           point: impact.position.clone(),
           isHeadshot,
         });
+      } else if (directBossHit) {
+        bossDamageEvent = {
+          damage: impact.directDamage,
+          point: impact.position.clone(),
+          isHeadshot: Boolean(impact.directHitObject?.userData?.hitZone === "head"),
+        };
       }
 
       if (impact.radius > 0 && impact.splashDamage > 0) {
@@ -914,16 +1034,36 @@ export class GameEngine {
             });
           }
         }
+
+        if (this.currentBoss && (!directBossHit || bossDamageEvent === null)) {
+          const bossDistance = this.currentBoss.getPosition().distanceTo(impact.position);
+          if (bossDistance <= impact.radius + 1.4) {
+            const scaledDamage = impact.splashDamage * (1 - bossDistance / impact.radius);
+            if (scaledDamage > 0) {
+              bossDamageEvent = bossDamageEvent
+                ? {
+                    ...bossDamageEvent,
+                    damage: bossDamageEvent.damage + scaledDamage,
+                  }
+                : {
+                    damage: scaledDamage,
+                    point: impact.position.clone(),
+                    isHeadshot: false,
+                  };
+            }
+          }
+        }
       }
 
-      if (damageEvents.size > 0) {
-        this.applyDamageEvents(damageEvents, impact.weaponName);
+      if (damageEvents.size > 0 || bossDamageEvent) {
+        this.applyDamageEvents(damageEvents, bossDamageEvent, impact.weaponName);
       }
     }
   }
 
   private applyDamageEvents(
     damageEvents: Map<string, { damage: number; point: THREE.Vector3; isHeadshot: boolean }>,
+    bossDamageEvent: { damage: number; point: THREE.Vector3; isHeadshot: boolean } | null,
     weaponName: string
   ): void {
     for (const [botId, event] of damageEvents.entries()) {
@@ -944,6 +1084,17 @@ export class GameEngine {
         weapon: weaponName,
         timestamp: Date.now(),
       });
+    }
+
+    if (bossDamageEvent && this.currentBoss) {
+      const damage = Math.max(1, Math.round(bossDamageEvent.damage));
+      const killed = this.currentBoss.takeDamage(damage);
+      this.bossState = this.currentBoss.getState();
+      this.audio.playHit();
+      this.emit("hit", bossDamageEvent.point, damage, bossDamageEvent.isHeadshot);
+      if (killed) {
+        this.handleBossDefeated(weaponName);
+      }
     }
   }
 
@@ -981,6 +1132,13 @@ export class GameEngine {
   }
 
   private updateObjectives(dt: number, interactHeld: boolean): void {
+    if (this.levelRuntime.phase === "boss") {
+      this.levelRuntime.interactProgress = 0;
+      this.levelRuntime.extractionProgress = 0;
+      this.objectiveState = this.buildObjectiveState(null);
+      return;
+    }
+
     const playerPos = this.player.body.position;
     const activeInteractable = this.getActiveInteractable();
     const activeHoldZone = this.getActiveHoldZone();
@@ -1039,6 +1197,29 @@ export class GameEngine {
     }
 
     this.objectiveState = this.buildObjectiveState(interactPrompt);
+  }
+
+  private updateBoss(dt: number): void {
+    if (!this.currentBoss) return;
+
+    const events = this.currentBoss.update({
+      dt,
+      playerBody: this.player.body,
+      playerAlive: this.player.isAlive,
+      colliders: this.arena.colliders,
+      worldMeshes: this.arena.wallMeshes,
+    });
+    this.bossState = this.currentBoss.getState();
+
+    for (const event of events) {
+      if (this.player.isInvulnerable()) continue;
+      const died = this.player.takeDamage(event.damage);
+      this.player.camera.applyDamageShake(event.damage);
+      this.emit("healthChanged", this.player.health);
+      if (!died) continue;
+      this.handleBossRetry();
+      return;
+    }
   }
 
   private handleWeaponPickups(
@@ -1133,9 +1314,7 @@ export class GameEngine {
     }
 
     if (this.currentLevel.objectiveKind === "switch-escape") {
-      this.levelRuntime.extractionUnlocked = true;
-      this.levelRuntime.escapeTimer = this.currentLevel.escapeDuration ?? 35;
-      this.spawnReinforcements(this.currentLevel.reinforcementSpawns ?? []);
+      this.startBossEncounter();
     }
 
     this.levelRuntime.objectiveIndex += 1;
@@ -1144,7 +1323,7 @@ export class GameEngine {
       this.currentLevel.objectiveKind === "terminal-sequence" &&
       this.levelRuntime.objectiveIndex >= this.currentLevel.interactables.length
     ) {
-      this.levelRuntime.extractionUnlocked = true;
+      this.startBossEncounter();
     }
 
     this.completeOptionalObjectivesFromInteractable(entry.def.id);
@@ -1163,7 +1342,7 @@ export class GameEngine {
     this.levelRuntime.objectiveIndex += 1;
     this.levelRuntime.holdProgress[entry.def.id] = entry.def.duration;
     if (this.levelRuntime.objectiveIndex >= this.currentLevel.holdZones.length) {
-      this.levelRuntime.extractionUnlocked = true;
+      this.startBossEncounter();
     }
     this.updateCheckpointFromObjective();
     this.resetObjectiveDamageWindow();
@@ -1256,7 +1435,7 @@ export class GameEngine {
 
   private initializeLevel(levelIndex: number, resetRun: boolean): void {
     this.currentLevelIndex = levelIndex;
-    this.currentLevel = LEVEL_DEFINITIONS[LEVEL_ORDER[levelIndex]];
+    this.currentLevel = cloneLevelDefinition(LEVEL_DEFINITIONS[LEVEL_ORDER[levelIndex]]);
     this.levelSummary = {
       id: this.currentLevel.id,
       name: this.currentLevel.name,
@@ -1308,6 +1487,7 @@ export class GameEngine {
     this.jumpPadCooldowns.clear();
 
     this.levelRuntime = {
+      phase: "objective",
       objectiveIndex: 0,
       completedInteractables: [],
       holdProgress: Object.fromEntries(
@@ -1329,6 +1509,8 @@ export class GameEngine {
       overchargeState: Object.fromEntries(
         this.currentLevel.holdZones.map((entry) => [entry.id, false])
       ),
+      bossStarted: false,
+      bossDefeated: false,
     };
 
     this.levelCompleteSummary = null;
@@ -1337,7 +1519,10 @@ export class GameEngine {
     this.levelScoreBaseline = this.player.score;
     this.threatAlert = createInactiveThreatAlert();
     this.radarState = createInactiveRadarState();
+    this.bossState = createInactiveBossState();
+    this.bossCheckpoint = createInactiveBossCheckpoint();
     this.activeOpportunity = null;
+    this.expiredOptionalObjectives.clear();
     this.objectiveDamageTaken = 0;
     this.objectiveStartHealth = this.player.health;
     this.pressureTimer = PRESSURE_WINDOW;
@@ -1363,6 +1548,11 @@ export class GameEngine {
       bot.dispose();
     }
     this.bots = [];
+    if (this.currentBoss) {
+      this.currentBoss.dispose();
+      this.currentBoss = null;
+    }
+    this.clearBossLockdowns();
     this.weaponPickups = [];
     for (const objective of this.optionalObjectives) {
       this.scene.remove(objective.mesh);
@@ -1383,6 +1573,153 @@ export class GameEngine {
 
     if (this.arena?.root) {
       this.scene.remove(this.arena.root);
+    }
+  }
+
+  private clearBossLockdowns(): void {
+    for (const barrier of this.bossLockdowns) {
+      const colliderIndex = this.arena?.colliders?.indexOf(barrier) ?? -1;
+      if (colliderIndex !== -1) {
+        this.arena.colliders.splice(colliderIndex, 1);
+      }
+      const wallIndex = this.arena?.wallMeshes?.indexOf(barrier.mesh) ?? -1;
+      if (wallIndex !== -1) {
+        this.arena.wallMeshes.splice(wallIndex, 1);
+      }
+      this.arena?.root.remove(barrier.mesh);
+      barrier.mesh.geometry.dispose();
+      if (Array.isArray(barrier.mesh.material)) {
+        barrier.mesh.material.forEach((material) => material.dispose());
+      } else {
+        barrier.mesh.material.dispose();
+      }
+    }
+    this.bossLockdowns = [];
+  }
+
+  private spawnBossLockdowns(): void {
+    this.clearBossLockdowns();
+    for (const segment of this.currentLevel.bossEncounter.lockdownSegments) {
+      const barrier = createBossLockdownSegment(this.arena.root, segment);
+      this.bossLockdowns.push(barrier);
+      this.arena.colliders.push(barrier);
+      this.arena.wallMeshes.push(barrier.mesh);
+    }
+  }
+
+  private startBossEncounter(): void {
+    if (this.levelRuntime.bossStarted) return;
+
+    this.levelRuntime.phase = "boss";
+    this.levelRuntime.bossStarted = true;
+    this.levelRuntime.extractionUnlocked = false;
+    this.levelRuntime.extractionProgress = 0;
+    this.levelRuntime.escapeTimer = null;
+    this.expireOptionalObjectivesForBoss();
+    this.clearCommonBots();
+    this.weapon.refillAllAmmoToFull();
+    this.player.health = this.player.maxHealth;
+    const checkpoint = this.currentLevel.bossEncounter.checkpoint;
+    this.player.respawn(checkpoint);
+    this.weapon.clearTransientState();
+    this.bossCheckpoint = {
+      active: true,
+      spawn: {
+        position: checkpoint.position.clone(),
+        rotation: checkpoint.rotation,
+      },
+      loadoutSnapshot: this.weapon.createLoadoutSnapshot(),
+      weaponPickupClaims: [...this.claimedWeaponPickups],
+    };
+    this.spawnBossLockdowns();
+    this.currentBoss = createBossActor(this.scene, this.currentLevel.bossEncounter);
+    this.bossState = this.currentBoss.getState();
+    this.objectiveState = this.buildObjectiveState(null);
+    this.emit("healthChanged", this.player.health);
+    this.emit("ammoChanged", this.weapon.ammo, this.weapon.reserveAmmo);
+    this.emit("inventoryChanged", this.weapon.getInventoryState());
+    this.emit("bossChanged", this.bossState);
+  }
+
+  private handleBossRetry(): void {
+    if (!this.currentBoss || !this.bossCheckpoint.active || !this.bossCheckpoint.spawn) return;
+    this.player.respawn(this.bossCheckpoint.spawn);
+    if (this.bossCheckpoint.loadoutSnapshot) {
+      this.weapon.restoreLoadoutSnapshot(this.bossCheckpoint.loadoutSnapshot);
+    }
+    this.weapon.refillAllAmmoToFull();
+    this.currentBoss.resetForRetry();
+    this.bossState = this.currentBoss.getState();
+    this.pickupPrompt = createInactivePickupPrompt();
+    this.claimedWeaponPickups.clear();
+    for (const key of this.bossCheckpoint.weaponPickupClaims) {
+      this.claimedWeaponPickups.add(key);
+    }
+    for (const pickup of this.weaponPickups) {
+      pickup.claimed = this.claimedWeaponPickups.has(pickup.key);
+      pickup.replaceProgress = 0;
+      pickup.visual.group.visible = !pickup.claimed;
+    }
+    this.emit("healthChanged", this.player.health);
+    this.emit("deathsChanged", this.player.deaths);
+    this.emit("ammoChanged", this.weapon.ammo, this.weapon.reserveAmmo);
+    this.emit("inventoryChanged", this.weapon.getInventoryState());
+    this.emit("bossChanged", this.bossState);
+  }
+
+  private handleBossDefeated(weaponName: string): void {
+    const encounter = this.currentLevel.bossEncounter;
+    this.awardScore(encounter.scoreValue);
+    this.pushScoreEvent({ kind: "objective", label: "Boss Down", amount: encounter.scoreValue });
+    this.addComboValue(Math.round(encounter.scoreValue * 0.18), "Boss Down", "objective", encounter.displayName);
+    this.awardProgressionXp(encounter.xpValue);
+    this.totalKills += 1;
+    this.levelRuntime.phase = "extract";
+    this.levelRuntime.bossDefeated = true;
+    this.levelRuntime.extractionUnlocked = true;
+    if (this.currentLevel.id === "blackout-run") {
+      this.levelRuntime.escapeTimer =
+        encounter.escapeDurationAfterKill ?? this.currentLevel.escapeDuration ?? 35;
+    }
+    this.emit("kill", {
+      killer: "You",
+      victim: encounter.displayName,
+      weapon: weaponName,
+      timestamp: Date.now(),
+    });
+    this.clearBossLockdowns();
+    this.currentBoss?.dispose();
+    this.currentBoss = null;
+    this.bossState = {
+      ...createInactiveBossState(),
+      defeated: true,
+      id: encounter.bossId,
+      name: encounter.displayName,
+      weaponType: encounter.weaponType,
+      health: 0,
+      maxHealth: encounter.health,
+      introText: encounter.introText,
+    };
+    this.objectiveState = this.buildObjectiveState(null);
+    this.updateMedalPace();
+    this.tryOpenLevelUpChoice();
+    this.emit("bossChanged", this.bossState);
+  }
+
+  private clearCommonBots(): void {
+    for (const bot of this.bots) {
+      bot.dispose();
+    }
+    this.bots = [];
+    this.levelRuntime.reinforcementIds = [...this.currentLevel.reinforcementSpawns?.map((entry) => entry.id) ?? []];
+  }
+
+  private expireOptionalObjectivesForBoss(): void {
+    this.expiredOptionalObjectives.clear();
+    for (const objective of this.currentLevel.optionalObjectives) {
+      if (objective.onlyAfterExtractionUnlocked || objective.kind === "timed-extract") continue;
+      if (this.levelRuntime.completedOptionalObjectives.includes(objective.id)) continue;
+      this.expiredOptionalObjectives.add(objective.id);
     }
   }
 
@@ -1472,21 +1809,74 @@ export class GameEngine {
     return this.arena?.holdZones?.[this.levelRuntime.objectiveIndex] ?? null;
   }
 
+  private buildExtractionObjectiveState(
+    interactPrompt: string | null,
+    opportunityHint: string | null
+  ): ObjectiveState {
+    const extractionDuration =
+      this.arena.extraction.def.holdDuration * this.getInteractionDurationScale();
+    const extractionLabel = this.arena.extraction.def.label;
+    const extractionText = /extract/i.test(extractionLabel)
+      ? `Reach ${extractionLabel}`
+      : `Extract at ${extractionLabel}`;
+
+    return {
+      kind: this.currentLevel.objectiveKind,
+      phase: "extract",
+      title: this.currentLevel.name,
+      text: extractionText,
+      detail: this.arena.extraction.def.hint,
+      progress: `${Math.min(extractionDuration, this.levelRuntime.extractionProgress).toFixed(1)}/${extractionDuration.toFixed(1)}`,
+      interactPrompt,
+      extractionUnlocked: true,
+      escapeTimer:
+        this.levelRuntime.escapeTimer === null
+          ? null
+          : Number(this.levelRuntime.escapeTimer.toFixed(1)),
+      opportunityHint,
+    };
+  }
+
   private buildObjectiveState(interactPrompt: string | null): ObjectiveState {
     const opportunityHint = this.activeOpportunity
       ? `${this.activeOpportunity.label}: ${this.activeOpportunity.hint}`
       : null;
 
+    if (this.levelRuntime.phase === "boss" && this.bossState.active) {
+      return {
+        kind: this.currentLevel.objectiveKind,
+        phase: "boss",
+        title: this.currentLevel.name,
+        text: `Defeat ${this.currentLevel.bossEncounter.displayName}`,
+        detail: this.currentLevel.bossEncounter.introText,
+        progress: `${Math.max(0, Math.round(this.bossState.health))}/${this.bossState.maxHealth}`,
+        interactPrompt: null,
+        extractionUnlocked: false,
+        escapeTimer: null,
+        opportunityHint: null,
+      };
+    }
+
+    if (this.levelRuntime.phase === "extract" && this.levelRuntime.extractionUnlocked) {
+      return this.buildExtractionObjectiveState(interactPrompt, opportunityHint);
+    }
+
     if (this.currentLevel.objectiveKind === "terminal-sequence") {
       const active = this.getActiveInteractable();
+      const total = this.currentLevel.interactables.length;
+      const currentStep = Math.min(this.levelRuntime.objectiveIndex + 1, total);
+
       return {
         kind: "terminal-sequence",
+        phase: this.levelRuntime.phase,
         title: this.currentLevel.name,
         text: active
-          ? `Go to ${active.def.label}`
-          : "Move to extraction",
-        detail: "",
-        progress: `${this.levelRuntime.completedInteractables.length}/${this.currentLevel.interactables.length}`,
+          ? `Sync ${active.def.label}`
+          : `Finish ${this.currentLevel.name}`,
+        detail: active
+          ? `${active.def.hint} Terminal ${currentStep} of ${total}.`
+          : this.currentLevel.subtitle,
+        progress: `${this.levelRuntime.completedInteractables.length}/${total}`,
         interactPrompt,
         extractionUnlocked: this.levelRuntime.extractionUnlocked,
         escapeTimer: null,
@@ -1496,6 +1886,8 @@ export class GameEngine {
 
     if (this.currentLevel.objectiveKind === "hold-zone") {
       const active = this.getActiveHoldZone();
+      const total = this.currentLevel.holdZones.length;
+      const currentStep = Math.min(this.levelRuntime.objectiveIndex + 1, total);
       const progressValue = active
         ? this.levelRuntime.holdProgress[active.def.id] ?? 0
         : this.currentLevel.holdZones.reduce(
@@ -1504,14 +1896,17 @@ export class GameEngine {
           );
       return {
         kind: "hold-zone",
+        phase: this.levelRuntime.phase,
         title: this.currentLevel.name,
         text: active
-          ? `Hold ${active.def.label}`
-          : "Move to extraction",
-        detail: "",
+          ? `Secure ${active.def.label}`
+          : `Finish ${this.currentLevel.name}`,
+        detail: active
+          ? `${active.def.hint} Stay inside the ring until the uplink stabilizes. Zone ${currentStep} of ${total}.`
+          : this.currentLevel.subtitle,
         progress: active
           ? `${Math.min(active.def.duration, progressValue).toFixed(1)}/${active.def.duration.toFixed(1)}`
-          : `${this.currentLevel.holdZones.length}/${this.currentLevel.holdZones.length}`,
+          : `${total}/${total}`,
         interactPrompt,
         extractionUnlocked: this.levelRuntime.extractionUnlocked,
         escapeTimer: null,
@@ -1520,13 +1915,17 @@ export class GameEngine {
     }
 
     const switchComplete = this.levelRuntime.completedInteractables.length > 0;
+    const reactorSwitch = this.currentLevel.interactables[0];
     return {
       kind: "switch-escape",
+      phase: this.levelRuntime.phase,
       title: this.currentLevel.name,
       text: switchComplete
-        ? "Get to extraction"
-        : `Trigger ${this.currentLevel.interactables[0]?.label ?? "reactor"}`,
-      detail: "",
+        ? `Finish ${this.currentLevel.name}`
+        : `Trigger ${reactorSwitch?.label ?? "reactor"}`,
+      detail: switchComplete
+        ? this.currentLevel.subtitle
+        : reactorSwitch?.hint ?? "Trip the reactor to start the escape chain.",
       progress: switchComplete ? "1/1" : "0/1",
       interactPrompt,
       extractionUnlocked: this.levelRuntime.extractionUnlocked,
@@ -1636,6 +2035,7 @@ export class GameEngine {
     this.emit("reloading", inventory.isReloading);
     this.emit("threatChanged", this.threatAlert);
     this.emit("radarChanged", this.radarState);
+    this.emit("bossChanged", this.bossState);
     this.emit("movementChanged", {
       state: this.player.movementState,
       dashCooldown: this.player.getDashCooldown(),
@@ -1677,6 +2077,7 @@ export class GameEngine {
     this.emit("reloading", inventory.isReloading);
     this.emit("threatChanged", this.threatAlert);
     this.emit("radarChanged", this.radarState);
+    this.emit("bossChanged", this.bossState);
     this.emit("movementChanged", {
       state: this.player.movementState,
       dashCooldown: this.player.getDashCooldown(),
@@ -1901,11 +2302,28 @@ export class GameEngine {
 
     this.totalKills += 1;
     this.addComboValue(styleBonus, weaponName, "kill", bot.data.name);
-    this.awardKillXp(xpGain);
+    this.awardProgressionXp(xpGain);
     this.updateMedalPace();
   }
 
   private handlePlayerDeath(killerName: string): void {
+    this.gameState = "dying";
+    this.dyingTimer = 1.2;
+    this.dyingKillerName = killerName;
+
+    this.emit("kill", {
+      killer: killerName,
+      victim: "You",
+      weapon: "Rifle",
+      timestamp: Date.now(),
+    });
+    this.emit("gameStateChanged", "dying");
+    this.audio.playDeath();
+    this.input.exitPointerLock();
+    this.pushState();
+  }
+
+  private finalizeDeath(): void {
     this.gameState = "gameover";
 
     const stats: GameOverStats = {
@@ -1914,22 +2332,13 @@ export class GameEngine {
       timeAlive: Number(this.runTime.toFixed(1)),
       bestCombo: this.comboState.bestMultiplier,
       levelReached: this.currentLevel.name,
-      killedBy: killerName,
+      killedBy: this.dyingKillerName,
     };
 
     this.updatePersonalBest(false);
-
-    this.emit("kill", {
-      killer: killerName,
-      victim: "You",
-      weapon: "Rifle",
-      timestamp: Date.now(),
-    });
     this.emit("gameStateChanged", "gameover");
     this.emit("gameOver", stats);
     this.emit("personalBestChanged", this.personalBest);
-    this.audio.playDeath();
-    this.input.exitPointerLock();
     this.pushState();
   }
 
@@ -2039,6 +2448,7 @@ export class GameEngine {
   }
 
   private updateOptionalObjectives(dt: number, interactHeld: boolean): void {
+    if (this.levelRuntime.phase === "boss") return;
     for (const objective of this.currentLevel.optionalObjectives) {
       if (!this.isOptionalObjectiveActive(objective)) continue;
 
@@ -2155,6 +2565,14 @@ export class GameEngine {
     objective: LevelDefinition["optionalObjectives"][number]
   ): boolean {
     if (this.levelRuntime.completedOptionalObjectives.includes(objective.id)) return false;
+    if (this.expiredOptionalObjectives.has(objective.id)) return false;
+    if (
+      this.levelRuntime.phase === "boss" &&
+      !objective.onlyAfterExtractionUnlocked &&
+      objective.kind !== "timed-extract"
+    ) {
+      return false;
+    }
     if (
       objective.unlockObjectiveIndex !== undefined &&
       this.levelRuntime.objectiveIndex < objective.unlockObjectiveIndex
@@ -2351,7 +2769,7 @@ export class GameEngine {
     this.emit("gameStateChanged", this.gameState);
   }
 
-  private awardKillXp(amount: number): void {
+  private awardProgressionXp(amount: number): void {
     const powerScore = computePowerScore(this.activeUpgrades);
     this.progression = awardXp(this.progression, amount, powerScore);
     this.emit("progressionChanged", this.progression);
@@ -2361,11 +2779,11 @@ export class GameEngine {
   private getXpForBot(bot: Bot): number {
     let xp =
       bot.getArchetype() === "anchor"
-        ? 26
+        ? 12
         : bot.getArchetype() === "disruptor"
-          ? 22
-          : 18;
-    if (bot.isElite()) xp += 12;
+          ? 10
+          : 8;
+    if (bot.isElite()) xp += 6;
     return xp;
   }
 

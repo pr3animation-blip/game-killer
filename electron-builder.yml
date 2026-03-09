@@ -1,0 +1,15 @@
+appId: com.gamekiller.app
+productName: Game Killer
+directories:
+  output: dist-electron
+  buildResources: build
+files:
+  - out/**/*
+  - electron/**/*.js
+  - package.json
+mac:
+  target: dmg
+win:
+  target: nsis
+linux:
+  target: AppImage

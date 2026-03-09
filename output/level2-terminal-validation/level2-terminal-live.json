@@ -1,0 +1,373 @@
+{
+  "coordinateSystem": "x:right y:up z:forward-negative",
+  "state": "playing",
+  "level": {
+    "id": "uplink-split",
+    "name": "Uplink Split",
+    "index": 2,
+    "total": 3,
+    "levelTime": 0,
+    "runTime": 0
+  },
+  "player": {
+    "alive": true,
+    "health": 100,
+    "position": {
+      "x": -12.75,
+      "y": 0.1,
+      "z": 15.74
+    },
+    "eye": {
+      "x": -12.75,
+      "y": 1.63,
+      "z": 15.74
+    },
+    "forward": {
+      "x": 0,
+      "y": 0,
+      "z": 1
+    },
+    "movementState": "walk",
+    "dashCooldown": 0,
+    "speed": 0,
+    "horizontalSpeed": 0,
+    "verticalSpeed": 0,
+    "grounded": false,
+    "cameraRecoil": {
+      "pitch": 0,
+      "yaw": 0,
+      "roll": 0,
+      "back": 0,
+      "drop": 0
+    }
+  },
+  "inventory": {
+    "slots": [
+      {
+        "index": 0,
+        "weaponId": "vanguard-carbine",
+        "name": "Vanguard Carbine",
+        "shortName": "Carbine",
+        "ammo": 28,
+        "reserveAmmo": 112
+      },
+      {
+        "index": 1,
+        "weaponId": null,
+        "name": null,
+        "shortName": null,
+        "ammo": null,
+        "reserveAmmo": null
+      },
+      {
+        "index": 2,
+        "weaponId": null,
+        "name": null,
+        "shortName": null,
+        "ammo": null,
+        "reserveAmmo": null
+      }
+    ],
+    "activeSlot": 0,
+    "activeWeaponId": "vanguard-carbine",
+    "activeWeaponName": "Vanguard Carbine",
+    "fireMode": "auto",
+    "ammo": 28,
+    "reserveAmmo": 112,
+    "isReloading": false,
+    "chargeRatio": 0,
+    "reticleSpread": 0.18,
+    "isADS": false
+  },
+  "activeWeapon": {
+    "weaponId": "vanguard-carbine",
+    "name": "Vanguard Carbine",
+    "ammo": 28,
+    "reserveAmmo": 112,
+    "fireMode": "auto",
+    "chargeRatio": 0,
+    "reloading": false
+  },
+  "pickupPrompt": {
+    "active": false,
+    "pickupId": null,
+    "weaponId": null,
+    "label": "",
+    "action": "pickup",
+    "text": "",
+    "progress": 0
+  },
+  "objective": {
+    "kind": "terminal-sequence",
+    "phase": "objective",
+    "title": "Uplink Split",
+    "text": "Sync Terminal A",
+    "detail": "Stabilize the west uplink terminal to reopen the center lane. Terminal 1 of 2.",
+    "progress": "0/2",
+    "interactPrompt": null,
+    "opportunityHint": null,
+    "activeInteractableId": "uplink-terminal-a",
+    "activeHoldZoneId": null,
+    "escapeTimer": null
+  },
+  "interactables": [
+    {
+      "id": "uplink-terminal-a",
+      "label": "Terminal A",
+      "hint": "Stabilize the west uplink terminal to reopen the center lane.",
+      "active": true,
+      "completed": false,
+      "position": {
+        "x": -12.75,
+        "y": 0.1,
+        "z": 12.34
+      }
+    },
+    {
+      "id": "uplink-terminal-b",
+      "label": "Terminal B",
+      "hint": "Sync the east uplink terminal to arm the central extraction lane.",
+      "active": false,
+      "completed": false,
+      "position": {
+        "x": 12.75,
+        "y": 0.1,
+        "z": -12.34
+      }
+    }
+  ],
+  "holdZones": [],
+  "extraction": {
+    "unlocked": false,
+    "hint": "Collapse back to mid and hold for pickup.",
+    "progress": 0,
+    "position": {
+      "x": 0.43,
+      "y": 0.1,
+      "z": 4.97
+    }
+  },
+  "jumpPads": [
+    {
+      "id": "uplink-pad-left",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": -9,
+        "y": 0.1,
+        "z": 7
+      }
+    },
+    {
+      "id": "uplink-pad-right",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": 9,
+        "y": 0.1,
+        "z": -7
+      }
+    }
+  ],
+  "weaponPickups": [
+    {
+      "id": "uplink-helix",
+      "label": "Helix Burst Rifle",
+      "weaponId": "helix-burst-rifle",
+      "claimed": false,
+      "position": {
+        "x": -2.49,
+        "y": 2.9,
+        "z": 3.53
+      }
+    },
+    {
+      "id": "uplink-rail",
+      "label": "Rail Lance",
+      "weaponId": "rail-lance",
+      "claimed": false,
+      "position": {
+        "x": 16.5,
+        "y": 0.1,
+        "z": -7.13
+      }
+    },
+    {
+      "id": "uplink-arc-refill",
+      "label": "Arc SMG Refill",
+      "weaponId": "arc-smg",
+      "claimed": false,
+      "position": {
+        "x": -15.73,
+        "y": 0.1,
+        "z": 12.61
+      }
+    }
+  ],
+  "projectiles": [],
+  "awareness": {
+    "active": false,
+    "direction": "front",
+    "count": 0,
+    "distance": 0
+  },
+  "radar": {
+    "range": 22,
+    "contacts": []
+  },
+  "combo": {
+    "multiplier": 1,
+    "liveBonus": 0,
+    "bankedLevel": 0,
+    "bankedRun": 0,
+    "timer": 0,
+    "maxTimer": 4.4,
+    "bestMultiplier": 1,
+    "bestLiveBonus": 0,
+    "streak": 0,
+    "heat": 0
+  },
+  "bank": {
+    "live": 0,
+    "level": 0,
+    "run": 0,
+    "lostOnDeath": 0
+  },
+  "mutator": {
+    "id": "dash-harvest",
+    "name": "Dash Harvest",
+    "description": "Dash and slide finishes supercharge combo growth."
+  },
+  "progression": {
+    "level": 1,
+    "xp": 0,
+    "xpIntoLevel": 0,
+    "xpToNextLevel": 20,
+    "pendingLevelUps": 0,
+    "powerScore": 0
+  },
+  "upgrades": [],
+  "levelUpChoice": {
+    "active": false,
+    "level": 0,
+    "choices": []
+  },
+  "runtimeModifiers": {
+    "damageMultiplier": 1,
+    "fireRateMultiplier": 1,
+    "reloadSpeedMultiplier": 1,
+    "spreadMultiplier": 1,
+    "magazineSizeMultiplier": 1,
+    "recoilMultiplier": 1,
+    "moveSpeedMultiplier": 1,
+    "airAccelMultiplier": 1,
+    "dashCooldownMultiplier": 1,
+    "dashSpeedMultiplier": 1,
+    "projectileCountBonus": 0,
+    "pierceBonus": 0,
+    "goldenChamber": false,
+    "scatterCore": false,
+    "blinkDash": false
+  },
+  "balance": {
+    "powerScore": 0,
+    "enemyHealthMultiplier": 1,
+    "enemyFireRateMultiplier": 1,
+    "reinforcementIntervalMultiplier": 1,
+    "medalThresholdMultiplier": 1
+  },
+  "medalPace": {
+    "current": null,
+    "next": "bronze",
+    "pointsToNext": 2200,
+    "maxTier": "s",
+    "degraded": false,
+    "targetTime": 74,
+    "splitDelta": -74,
+    "bestScore": 0,
+    "bestTime": null
+  },
+  "boss": null,
+  "opportunity": null,
+  "recoveryShard": null,
+  "personalBest": {
+    "bestRunScore": 0,
+    "bestRunTime": null,
+    "levelBestTimes": {},
+    "levelBestScores": {},
+    "lastRunScore": 0
+  },
+  "scoreEvents": [],
+  "bots": [
+    {
+      "id": "uplink-bot-1",
+      "name": "Phantom Anchor",
+      "state": "idle",
+      "health": 112,
+      "archetype": "anchor",
+      "elite": false,
+      "position": {
+        "x": -15,
+        "y": 0.1,
+        "z": -10
+      },
+      "lookDirection": {
+        "x": 0.7,
+        "y": 0.08,
+        "z": 0.7
+      },
+      "muzzle": {
+        "x": -14.18,
+        "y": 1.22,
+        "z": -9.1
+      }
+    },
+    {
+      "id": "uplink-bot-2",
+      "name": "Blaze Disruptor",
+      "state": "idle",
+      "health": 96,
+      "archetype": "disruptor",
+      "elite": false,
+      "position": {
+        "x": 15,
+        "y": 0.1,
+        "z": 10
+      },
+      "lookDirection": {
+        "x": -0.7,
+        "y": 0.08,
+        "z": -0.7
+      },
+      "muzzle": {
+        "x": 14.18,
+        "y": 1.22,
+        "z": 9.1
+      }
+    },
+    {
+      "id": "uplink-bot-3",
+      "name": "Venom Anchor",
+      "state": "idle",
+      "health": 112,
+      "archetype": "anchor",
+      "elite": false,
+      "position": {
+        "x": 0,
+        "y": 2.9,
+        "z": 0
+      },
+      "lookDirection": {
+        "x": 0,
+        "y": 0.08,
+        "z": -1
+      },
+      "muzzle": {
+        "x": 0.06,
+        "y": 4.02,
+        "z": -1.22
+      }
+    }
+  ],
+  "score": 0,
+  "deaths": 0,
+  "levelComplete": null
+}

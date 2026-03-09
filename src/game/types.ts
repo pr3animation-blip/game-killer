@@ -30,6 +30,7 @@ export interface KillEntry {
 
 export type LevelId = "relay-loop" | "uplink-split" | "blackout-run";
 export type ObjectiveKind = "terminal-sequence" | "hold-zone" | "switch-escape";
+export type LevelPhase = "objective" | "boss" | "extract";
 export type MovementState = "walk" | "sprint" | "slide" | "dash" | "air";
 export type WeaponId =
   | "vanguard-carbine"
@@ -49,6 +50,8 @@ export type WeaponFireMode =
 export type ThreatDirection = "front" | "left" | "right" | "behind";
 export type MedalTier = "bronze" | "silver" | "gold" | "s";
 export type EnemyArchetype = "rusher" | "anchor" | "disruptor";
+export type BossId = "relay-warden" | "uplink-overseer" | "blackout-hunter";
+export type BossWeaponType = "conductor-beam" | "siege-mortar" | "phase-rail";
 export type OptionalObjectiveKind =
   | "elite-wave"
   | "bonus-cache"
@@ -200,6 +203,7 @@ export interface WeaponDefinition {
   splashRadius?: number;
   splashDamage?: number;
   adsZoomFactor?: number;
+  adsSpeed?: number;
 }
 
 export interface WeaponInstance {
@@ -219,6 +223,18 @@ export interface WeaponSlotSummary {
   reserveAmmo: number | null;
 }
 
+export interface WeaponSlotLoadout {
+  weaponId: WeaponId | null;
+  ammo: number;
+  reserveAmmo: number;
+  goldenChamberReady: boolean;
+}
+
+export interface WeaponLoadoutSnapshot {
+  slots: WeaponSlotLoadout[];
+  activeSlot: number;
+}
+
 export interface InventoryState {
   slots: WeaponSlotSummary[];
   activeSlot: number;
@@ -228,6 +244,8 @@ export interface InventoryState {
   ammo: number;
   reserveAmmo: number;
   isReloading: boolean;
+  reloadProgress: number;
+  reloadDuration: number;
   chargeRatio: number;
   reticleSpread: number;
   isADS: boolean;
@@ -310,6 +328,48 @@ export interface CheckpointState {
   spawn: SpawnPoint;
 }
 
+export interface BossLockdownSegmentDefinition {
+  id: string;
+  position: THREE.Vector3;
+  size: THREE.Vector3;
+  color: number;
+}
+
+export interface BossEncounterDefinition {
+  bossId: BossId;
+  displayName: string;
+  weaponType: BossWeaponType;
+  spawn: SpawnPoint;
+  checkpoint: SpawnPoint;
+  lockdownSegments: BossLockdownSegmentDefinition[];
+  health: number;
+  scoreValue: number;
+  xpValue: number;
+  introText: string;
+  escapeDurationAfterKill?: number;
+}
+
+export interface BossState {
+  active: boolean;
+  introActive: boolean;
+  defeated: boolean;
+  id: BossId | null;
+  name: string;
+  weaponType: BossWeaponType | null;
+  health: number;
+  maxHealth: number;
+  phase: number;
+  telegraph: string | null;
+  introText: string | null;
+}
+
+export interface BossCheckpointState {
+  active: boolean;
+  spawn: SpawnPoint | null;
+  loadoutSnapshot: WeaponLoadoutSnapshot | null;
+  weaponPickupClaims: string[];
+}
+
 export interface BotSpawnDefinition {
   id: string;
   spawn: SpawnPoint;
@@ -320,6 +380,7 @@ export interface BotSpawnDefinition {
 
 export interface ObjectiveState {
   kind: ObjectiveKind;
+  phase: LevelPhase;
   title: string;
   text: string;
   detail: string;
@@ -488,6 +549,7 @@ export interface RecoveryShardState {
 }
 
 export interface LevelRuntimeState {
+  phase: LevelPhase;
   objectiveIndex: number;
   completedInteractables: string[];
   holdProgress: Record<string, number>;
@@ -503,6 +565,8 @@ export interface LevelRuntimeState {
   levelDeaths: number;
   checkpointIndex: number;
   overchargeState: Record<string, boolean>;
+  bossStarted: boolean;
+  bossDefeated: boolean;
 }
 
 export interface LevelDefinition {
@@ -529,6 +593,7 @@ export interface LevelDefinition {
   optionalObjectives: OptionalObjectiveDefinition[];
   medalThresholds: MedalThresholds;
   checkpoints: CheckpointState[];
+  bossEncounter: BossEncounterDefinition;
 }
 
 export interface LevelSummary {
@@ -585,8 +650,10 @@ export type GameState =
   | "menu"
   | "playing"
   | "paused"
+  | "dying"
   | "levelUpChoice"
   | "levelComplete"
+  | "levelTransition"
   | "runComplete"
   | "gameover";
 
@@ -604,6 +671,7 @@ export type GameEventMap = {
   hit: { position: THREE.Vector3; damage: number };
   threatChanged: ThreatAlert;
   radarChanged: RadarState;
+  bossChanged: BossState;
   movementChanged: {
     state: MovementState;
     dashCooldown: number;

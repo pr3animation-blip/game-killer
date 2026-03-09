@@ -1,0 +1,353 @@
+{
+  "coordinateSystem": "x:right y:up z:forward-negative",
+  "state": "levelUpChoice",
+  "level": {
+    "id": "blackout-run",
+    "name": "Blackout Run",
+    "index": 3,
+    "total": 3,
+    "levelTime": 0,
+    "runTime": 0
+  },
+  "player": {
+    "alive": true,
+    "health": 100,
+    "position": {
+      "x": 0,
+      "y": 0.1,
+      "z": -10
+    },
+    "eye": {
+      "x": 0,
+      "y": 1.63,
+      "z": -10
+    },
+    "forward": {
+      "x": 0,
+      "y": 0,
+      "z": 1
+    },
+    "movementState": "walk",
+    "dashCooldown": 0,
+    "speed": 0,
+    "horizontalSpeed": 0,
+    "verticalSpeed": 0,
+    "grounded": false,
+    "cameraRecoil": {
+      "pitch": 0,
+      "yaw": 0,
+      "roll": 0,
+      "back": 0,
+      "drop": 0
+    }
+  },
+  "inventory": {
+    "slots": [
+      {
+        "index": 0,
+        "weaponId": "vanguard-carbine",
+        "name": "Vanguard Carbine",
+        "shortName": "Carbine",
+        "ammo": 28,
+        "reserveAmmo": 112
+      },
+      {
+        "index": 1,
+        "weaponId": null,
+        "name": null,
+        "shortName": null,
+        "ammo": null,
+        "reserveAmmo": null
+      },
+      {
+        "index": 2,
+        "weaponId": null,
+        "name": null,
+        "shortName": null,
+        "ammo": null,
+        "reserveAmmo": null
+      }
+    ],
+    "activeSlot": 0,
+    "activeWeaponId": "vanguard-carbine",
+    "activeWeaponName": "Vanguard Carbine",
+    "fireMode": "auto",
+    "ammo": 28,
+    "reserveAmmo": 112,
+    "isReloading": false,
+    "chargeRatio": 0,
+    "reticleSpread": 0.18,
+    "isADS": false
+  },
+  "activeWeapon": {
+    "weaponId": "vanguard-carbine",
+    "name": "Vanguard Carbine",
+    "ammo": 28,
+    "reserveAmmo": 112,
+    "fireMode": "auto",
+    "chargeRatio": 0,
+    "reloading": false
+  },
+  "pickupPrompt": {
+    "active": false,
+    "pickupId": null,
+    "weaponId": null,
+    "label": "",
+    "action": "pickup",
+    "text": "",
+    "progress": 0
+  },
+  "objective": {
+    "kind": "switch-escape",
+    "phase": "extract",
+    "title": "Blackout Run",
+    "text": "Trigger Reactor Switch",
+    "detail": "",
+    "progress": "0/1",
+    "interactPrompt": null,
+    "opportunityHint": null,
+    "activeInteractableId": "reactor-switch",
+    "activeHoldZoneId": null,
+    "escapeTimer": 28
+  },
+  "interactables": [
+    {
+      "id": "reactor-switch",
+      "label": "Reactor Switch",
+      "hint": "Trip the reactor. The evac clock starts immediately.",
+      "active": true,
+      "completed": false,
+      "position": {
+        "x": 0,
+        "y": 0.1,
+        "z": -23
+      }
+    }
+  ],
+  "holdZones": [],
+  "extraction": {
+    "unlocked": true,
+    "hint": "Sprint back to evac and hold before the collapse catches you.",
+    "progress": 0,
+    "position": {
+      "x": 0,
+      "y": 0.1,
+      "z": 24
+    }
+  },
+  "jumpPads": [
+    {
+      "id": "blackout-pad-1",
+      "label": "Return Pad",
+      "position": {
+        "x": -9,
+        "y": 0.1,
+        "z": -12
+      }
+    },
+    {
+      "id": "blackout-pad-2",
+      "label": "Return Pad",
+      "position": {
+        "x": 9,
+        "y": 0.1,
+        "z": 0
+      }
+    }
+  ],
+  "weaponPickups": [
+    {
+      "id": "blackout-plasma",
+      "label": "Plasma Lobber",
+      "weaponId": "plasma-lobber",
+      "claimed": false,
+      "position": {
+        "x": 0.2,
+        "y": 0.1,
+        "z": -9.65
+      }
+    },
+    {
+      "id": "blackout-scatter-refill",
+      "label": "Scattershot Refill",
+      "weaponId": "scattershot",
+      "claimed": false,
+      "position": {
+        "x": -6.03,
+        "y": 0.1,
+        "z": -15.14
+      }
+    },
+    {
+      "id": "blackout-rail-refill",
+      "label": "Rail Lance Refill",
+      "weaponId": "rail-lance",
+      "claimed": false,
+      "position": {
+        "x": -3.17,
+        "y": 0.1,
+        "z": 20.66
+      }
+    }
+  ],
+  "projectiles": [],
+  "awareness": {
+    "active": false,
+    "direction": "front",
+    "count": 0,
+    "distance": 0
+  },
+  "radar": {
+    "range": 22,
+    "contacts": []
+  },
+  "combo": {
+    "multiplier": 2,
+    "liveBonus": 630,
+    "bankedLevel": 0,
+    "bankedRun": 0,
+    "timer": 4.4,
+    "maxTimer": 4.4,
+    "bestMultiplier": 2,
+    "bestLiveBonus": 630,
+    "streak": 2,
+    "heat": 0.16363636363636364
+  },
+  "bank": {
+    "live": 630,
+    "level": 0,
+    "run": 0,
+    "lostOnDeath": 0
+  },
+  "mutator": {
+    "id": "volatile-supply",
+    "name": "Volatile Supply",
+    "description": "Enemies shoot faster, but drops and caches pay more."
+  },
+  "progression": {
+    "level": 6,
+    "xp": 280,
+    "xpIntoLevel": 135,
+    "xpToNextLevel": 230,
+    "pendingLevelUps": 5,
+    "powerScore": 0
+  },
+  "upgrades": [],
+  "levelUpChoice": {
+    "active": true,
+    "level": 4,
+    "choices": [
+      {
+        "id": "hollow-point",
+        "name": "Hollow Point",
+        "description": "Flat weapon damage increase for every gun in the run.",
+        "category": "weapon",
+        "rarity": "common",
+        "maxStacks": 3,
+        "powerBudget": 1.2
+      },
+      {
+        "id": "fleet-step",
+        "name": "Fleet Step",
+        "description": "Faster movement and stronger air acceleration.",
+        "category": "mobility",
+        "rarity": "common",
+        "maxStacks": 3,
+        "powerBudget": 1
+      }
+    ]
+  },
+  "runtimeModifiers": {
+    "damageMultiplier": 1,
+    "fireRateMultiplier": 1,
+    "reloadSpeedMultiplier": 1,
+    "spreadMultiplier": 1,
+    "magazineSizeMultiplier": 1,
+    "recoilMultiplier": 1,
+    "moveSpeedMultiplier": 1,
+    "airAccelMultiplier": 1,
+    "dashCooldownMultiplier": 1,
+    "dashSpeedMultiplier": 1,
+    "projectileCountBonus": 0,
+    "pierceBonus": 0,
+    "goldenChamber": false,
+    "scatterCore": false,
+    "blinkDash": false
+  },
+  "balance": {
+    "powerScore": 0,
+    "enemyHealthMultiplier": 1,
+    "enemyFireRateMultiplier": 1,
+    "reinforcementIntervalMultiplier": 1,
+    "medalThresholdMultiplier": 1
+  },
+  "medalPace": {
+    "current": "bronze",
+    "next": "silver",
+    "pointsToNext": 320,
+    "maxTier": "s",
+    "degraded": false,
+    "targetTime": 50,
+    "splitDelta": -50,
+    "bestScore": 0,
+    "bestTime": null
+  },
+  "boss": {
+    "active": false,
+    "introActive": false,
+    "defeated": true,
+    "id": "blackout-hunter",
+    "name": "Blackout Hunter",
+    "weaponType": "phase-rail",
+    "health": 0,
+    "maxHealth": 0,
+    "phase": 1,
+    "telegraph": null,
+    "introText": "Blackout Hunter inbound. Rail line charging."
+  },
+  "opportunity": null,
+  "recoveryShard": null,
+  "personalBest": {
+    "bestRunScore": 0,
+    "bestRunTime": null,
+    "levelBestTimes": {},
+    "levelBestScores": {},
+    "lastRunScore": 0
+  },
+  "scoreEvents": [
+    {
+      "kind": "objective",
+      "label": "Boss Down",
+      "amount": 468,
+      "detail": "Blackout Hunter",
+      "id": "1772995074800-0f9c9",
+      "timestamp": 1772995074800
+    },
+    {
+      "kind": "objective",
+      "label": "Boss Down",
+      "amount": 1300,
+      "id": "1772995074800-b6155",
+      "timestamp": 1772995074800
+    },
+    {
+      "kind": "objective",
+      "label": "Boss Down",
+      "amount": 162,
+      "detail": "Relay Warden",
+      "id": "1772995072865-d5ab7",
+      "timestamp": 1772995072865
+    },
+    {
+      "kind": "objective",
+      "label": "Boss Down",
+      "amount": 900,
+      "id": "1772995072865-3fe7f",
+      "timestamp": 1772995072865
+    }
+  ],
+  "bots": [],
+  "score": 2200,
+  "deaths": 0,
+  "levelComplete": null
+}

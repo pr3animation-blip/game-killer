@@ -1,0 +1,290 @@
+{
+  "coordinateSystem": "x:right y:up z:forward-negative",
+  "state": "playing",
+  "level": {
+    "id": "uplink-split",
+    "name": "Uplink Split",
+    "index": 2,
+    "total": 3,
+    "levelTime": 1.2,
+    "runTime": 2.3
+  },
+  "player": {
+    "alive": true,
+    "health": 100,
+    "position": {
+      "x": 0.73,
+      "y": 0,
+      "z": 4.26
+    },
+    "eye": {
+      "x": 0.73,
+      "y": 1.53,
+      "z": 4.26
+    },
+    "forward": {
+      "x": 0,
+      "y": 0,
+      "z": -1
+    },
+    "movementState": "walk",
+    "dashCooldown": 0,
+    "speed": 7
+  },
+  "inventory": {
+    "slots": [
+      {
+        "index": 0,
+        "weaponId": "helix-burst-rifle",
+        "name": "Helix Burst Rifle",
+        "shortName": "Helix",
+        "ammo": 21,
+        "reserveAmmo": 96
+      },
+      {
+        "index": 1,
+        "weaponId": "arc-smg",
+        "name": "Arc SMG",
+        "shortName": "Arc SMG",
+        "ammo": 36,
+        "reserveAmmo": 136
+      }
+    ],
+    "activeSlot": 0,
+    "activeWeaponId": "helix-burst-rifle",
+    "activeWeaponName": "Helix Burst Rifle",
+    "fireMode": "burst",
+    "ammo": 21,
+    "reserveAmmo": 96,
+    "isReloading": false,
+    "chargeRatio": 0,
+    "reticleSpread": 0.15
+  },
+  "activeWeapon": {
+    "weaponId": "helix-burst-rifle",
+    "name": "Helix Burst Rifle",
+    "ammo": 21,
+    "reserveAmmo": 96,
+    "fireMode": "burst",
+    "chargeRatio": 0,
+    "reloading": false
+  },
+  "pickupPrompt": {
+    "active": false,
+    "pickupId": null,
+    "weaponId": null,
+    "label": "",
+    "action": "pickup",
+    "text": "",
+    "progress": 0
+  },
+  "objective": {
+    "kind": "hold-zone",
+    "title": "Uplink Split",
+    "text": "Hold Uplink A",
+    "detail": "Stabilize the west uplink to reopen the center lane.",
+    "progress": "0.0/5.0s secure",
+    "interactPrompt": null,
+    "activeInteractableId": null,
+    "activeHoldZoneId": "uplink-a",
+    "escapeTimer": null
+  },
+  "interactables": [],
+  "holdZones": [
+    {
+      "id": "uplink-a",
+      "label": "Uplink A",
+      "hint": "Stabilize the west uplink to reopen the center lane.",
+      "active": true,
+      "progress": 0,
+      "required": 5,
+      "position": {
+        "x": -14,
+        "y": 0.1,
+        "z": 11
+      }
+    },
+    {
+      "id": "uplink-b",
+      "label": "Uplink B",
+      "hint": "Mirror the network link on the east wing.",
+      "active": false,
+      "progress": 0,
+      "required": 5,
+      "position": {
+        "x": 14,
+        "y": 0.1,
+        "z": -11
+      }
+    }
+  ],
+  "extraction": {
+    "unlocked": false,
+    "hint": "Collapse back to mid and hold for pickup.",
+    "progress": 0,
+    "position": {
+      "x": 0,
+      "y": 0.1,
+      "z": 0
+    }
+  },
+  "jumpPads": [
+    {
+      "id": "uplink-pad-left",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": -9,
+        "y": 0.1,
+        "z": 7
+      }
+    },
+    {
+      "id": "uplink-pad-right",
+      "label": "Catwalk Pad",
+      "position": {
+        "x": 9,
+        "y": 0.1,
+        "z": -7
+      }
+    }
+  ],
+  "weaponPickups": [
+    {
+      "id": "uplink-helix",
+      "label": "Helix Burst Rifle",
+      "weaponId": "helix-burst-rifle",
+      "claimed": true,
+      "position": {
+        "x": 0.73,
+        "y": 2.9,
+        "z": 4.26
+      }
+    },
+    {
+      "id": "uplink-rail",
+      "label": "Rail Lance",
+      "weaponId": "rail-lance",
+      "claimed": false,
+      "position": {
+        "x": 17.97,
+        "y": 0.1,
+        "z": -6.87
+      }
+    },
+    {
+      "id": "uplink-arc-refill",
+      "label": "Arc SMG Refill",
+      "weaponId": "arc-smg",
+      "claimed": false,
+      "position": {
+        "x": -14,
+        "y": 0.1,
+        "z": 11
+      }
+    }
+  ],
+  "projectiles": [],
+  "awareness": {
+    "active": true,
+    "direction": "front",
+    "count": 3,
+    "distance": 4.3
+  },
+  "radar": {
+    "range": 22,
+    "contacts": [
+      {
+        "id": "uplink-bot-3",
+        "x": -0.057,
+        "y": 0.185,
+        "distance": 4.3,
+        "clamped": false,
+        "watching": true
+      },
+      {
+        "id": "uplink-bot-2",
+        "x": 0.441,
+        "y": -0.186,
+        "distance": 10.5,
+        "clamped": false,
+        "watching": true
+      },
+      {
+        "id": "uplink-bot-1",
+        "x": -0.593,
+        "y": 0.473,
+        "distance": 16.7,
+        "clamped": false,
+        "watching": true
+      }
+    ]
+  },
+  "bots": [
+    {
+      "id": "uplink-bot-1",
+      "name": "Botuplink-bot-1",
+      "state": "chase",
+      "health": 100,
+      "position": {
+        "x": -12.31,
+        "y": 0,
+        "z": -6.15
+      },
+      "lookDirection": {
+        "x": 0.78,
+        "y": 0.08,
+        "z": 0.62
+      },
+      "muzzle": {
+        "x": -11.4,
+        "y": 1.12,
+        "z": -5.35
+      }
+    },
+    {
+      "id": "uplink-bot-2",
+      "name": "Botuplink-bot-2",
+      "state": "chase",
+      "health": 100,
+      "position": {
+        "x": 10.44,
+        "y": 0,
+        "z": 8.34
+      },
+      "lookDirection": {
+        "x": -0.92,
+        "y": 0.08,
+        "z": -0.39
+      },
+      "muzzle": {
+        "x": 9.34,
+        "y": 1.12,
+        "z": 7.82
+      }
+    },
+    {
+      "id": "uplink-bot-3",
+      "name": "Botuplink-bot-3",
+      "state": "attack",
+      "health": 100,
+      "position": {
+        "x": -0.53,
+        "y": 2.9,
+        "z": 0.19
+      },
+      "lookDirection": {
+        "x": 0.26,
+        "y": -0.44,
+        "z": 0.86
+      },
+      "muzzle": {
+        "x": -0.25,
+        "y": 3.4,
+        "z": 1.29
+      }
+    }
+  ],
+  "score": 0,
+  "deaths": 0,
+  "levelComplete": null
+}
