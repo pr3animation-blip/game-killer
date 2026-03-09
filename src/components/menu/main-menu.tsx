@@ -61,13 +61,17 @@ export function MainMenu({
         <header className="flex items-start justify-between">
           {/* Logo mark — top left */}
           <div
-            className="tac-fade-in flex items-center gap-3"
+            className="tac-fade-in flex flex-col gap-1"
             style={{ animationDelay: "100ms" }}
           >
-            <span
-              className="font-mono text-[10px] uppercase tracking-[0.5em] text-primary/60"
+            <h1
+              className="text-[clamp(1.5rem,3vw,2.25rem)] font-bold uppercase leading-none tracking-[0.18em] text-primary"
+              style={{ textShadow: "0 0 40px rgba(224, 96, 48, 0.3), 0 0 80px rgba(224, 96, 48, 0.1)" }}
             >
-              GK-SYS
+              Void Runner
+            </h1>
+            <span className="font-mono text-[10px] uppercase tracking-[0.5em] text-primary/40">
+              GK-SYS // v0.1.0
             </span>
           </div>
 
@@ -79,7 +83,7 @@ export function MainMenu({
             <span className="font-mono text-[10px] tabular-nums tracking-[0.3em] text-primary/40">
               {time}
             </span>
-            <span className="tac-chip">v0.1.0</span>
+            <span className="tac-chip">Online</span>
           </div>
         </header>
 
